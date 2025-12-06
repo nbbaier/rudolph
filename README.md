@@ -1,109 +1,154 @@
-# Advent of Code
+# rudolph
 
-This repository contains solutions and a runner for Advent of Code, built with Bun and TypeScript.
-
-## Prerequisites
-
--  [Bun](https://bun.sh/) (latest version recommended)
+Advent of Code CLI - scaffold, run, and manage AoC solutions.
 
 ## Installation
 
-1. Clone the repository.
-2. Install dependencies:
-   ```bash
-   bun install
-   ```
+```bash
+# With npm
+npm install -g rudolph
 
-## Setup
+# With bun (recommended for best performance)
+bun install -g rudolph
 
-Create a `.env` file in the root directory to store your session cookie. This is required for downloading inputs and puzzle descriptions.
+# With pnpm
+pnpm add -g rudolph
 
-```env
-AOC_SESSION=your_session_cookie_here
+# With yarn
+yarn global add rudolph
 ```
 
-## Usage
-
-The project includes several scripts to help manage and run your solutions. The CLI defaults to the current day and year if options are omitted.
-
-### Scaffolding a New Day
-
-Sets up the directory structure for a new day, creates solution files from templates, and downloads the input and puzzle description.
+## Quick Start
 
 ```bash
-bun run scaffold [-d|--day <day>] [-y|--year <year>] [-f|--force]
+# Create a .env file with your session cookie
+echo "AOC_SESSION=your-session-cookie" > .env
+
+# Scaffold today's puzzle
+rudolph scaffold
+
+# Scaffold a specific day
+rudolph scaffold -d 1 -y 2024
 ```
+
+## Configuration
+
+Create a `.env` file in your project root:
+
+```
+AOC_SESSION=your-session-cookie
+OUTPUT_DIR=./aoc
+```
+
+| Variable      | Description                                        | Default |
+| ------------- | -------------------------------------------------- | ------- |
+| `AOC_SESSION` | Your AoC session cookie (required for downloading) | -       |
+| `OUTPUT_DIR`  | Where to scaffold puzzle files                     | `./aoc` |
+
+To get your session cookie:
+
+1. Log in to [adventofcode.com](https://adventofcode.com)
+2. Open browser dev tools → Application → Cookies
+3. Copy the `session` cookie value
+
+## Commands
+
+### `rudolph scaffold`
+
+Set up a new day - creates solution files, downloads input and puzzle description.
+
+```bash
+rudolph scaffold [options]
 
 Options:
-
--  `-d, --day <day>`: Day number (1-25), defaults to current day
--  `-y, --year <year>`: Year (e.g., 2024), defaults to current year
--  `-f, --force`: Force re-download even if files exist
-
-Example:
-
-```bash
-bun run scaffold -d 1 -y 2024
+  -d, --day <day>         Day number (1-25), defaults to today
+  -y, --year <year>       Year, defaults to current year
+  -f, --force             Force re-scaffold even if files exist
+  -o, --output-dir <dir>  Override output directory
 ```
 
-### Running Solutions
+### `rudolph try`
 
-**Test against sample input:**
-Runs the solution using `sample.txt`.
-
-```bash
-bun run try [-d|--day <day>] [-y|--year <year>]
-```
-
-**Run against real input:**
-Runs the solution using `input.txt` and displays execution time.
+Run your solution against `sample.txt`.
 
 ```bash
-bun run attempt [-d|--day <day>] [-y|--year <year>]
+rudolph try [options]
+
+Options:
+  -d, --day <day>         Day number (1-25)
+  -y, --year <year>       Year
+  -o, --output-dir <dir>  Override output directory
 ```
 
-### Reading the Puzzle
+### `rudolph attempt`
 
-Downloads the puzzle description to `puzzle.md` if it doesn't already exist.
+Run your solution against `input.txt` with timing.
 
 ```bash
-bun run read [-d|--day <day>] [-y|--year <year>] [-f|--force]
+rudolph attempt [options]
+
+Options:
+  -d, --day <day>         Day number (1-25)
+  -y, --year <year>       Year
+  -o, --output-dir <dir>  Override output directory
 ```
 
-### Refreshing the Puzzle
+### `rudolph read`
 
-Re-downloads the puzzle description (useful after solving part 1 to see part 2).
+Download puzzle description to `puzzle.md`.
 
 ```bash
-bun run refresh [-d|--day <day>] [-y|--year <year>]
+rudolph read [options]
+
+Options:
+  -d, --day <day>         Day number (1-25)
+  -y, --year <year>       Year
+  -f, --force             Force re-download
+  -o, --output-dir <dir>  Override output directory
 ```
 
-### Testing
+### `rudolph refresh`
 
-Run all tests using Vitest:
+Re-download puzzle (useful after solving part 1 to get part 2).
 
 ```bash
-bun run check
+rudolph refresh [options]
+
+Options:
+  -d, --day <day>         Day number (1-25)
+  -y, --year <year>       Year
+  -o, --output-dir <dir>  Override output directory
 ```
 
-Run tests in watch mode:
+## Generated File Structure
 
-```bash
-bun run watch
+```
+aoc/
+└── 2024/
+    └── day01/
+        ├── index.ts      # Solution file
+        ├── day01.test.ts # Test file
+        ├── puzzle.md     # Puzzle description
+        ├── input.txt     # Your puzzle input
+        └── sample.txt    # Sample input (fill this in)
 ```
 
-## Project Structure
+## Solution Format
 
--  `src/`: Source code for the CLI and utilities
-   -  `src/commands/`: Individual command implementations
-   -  `src/utils/`: Utility functions for CLI helpers, downloading, testing, etc.
-   -  `src/templates/`: Eta templates (`.eta` files) for generating new solution runners and tests
--  `aoc/[year]/[day]/`: Generated solution files (runner, tests, input, puzzle.md, etc.)
+Your `index.ts` should export a default object with `p1` and `p2` functions:
 
-## Templates
+```typescript
+function part1(input: string): number | string {
+   return 0;
+}
 
-Templates use [Eta](https://eta.js.org/) syntax. Variables are accessed via `it` (e.g., `<%= it.year %>`, `<%= it.day %>`). To customize templates, edit the `.eta` files in `src/templates/`.
+function part2(input: string): number | string {
+   return 0;
+}
 
-## \*_License_
+export default { p1: part1, p2: part2 };
+```
+
+## License
 
 MIT
