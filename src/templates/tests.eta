@@ -1,37 +1,17 @@
-import path from "node:path";
-import { describe } from "vitest";
-import type { TestData, TestMap } from "@/types";
-import { getDayPath, loadFile } from "@/utils";
-import { createTestMap, createTestSet } from "@/utils/test";
+import { describe, it, expect } from "vitest";
 import solution from "./index";
 
 const year = "<%= it.year %>";
 const day = "<%= it.day %>";
-const dayPath = getDayPath(year, day);
 
-const examples1: TestData[] = [
-	{
-		name: "tests for p1",
-		input: loadFile(path.resolve(dayPath, "sample.txt")),
-		output: 0,
-	},
-];
-const examples2: TestData[] = [
-	{
-		name: "tests for p2",
-		input: loadFile(path.resolve(dayPath, "sample.txt")),
-		output: 0,
-	},
-];
+describe(`${year} day ${day}`, () => {
+	const sampleInput = ``;
 
-const testMap1: TestMap = createTestMap(examples1);
-const testMap2: TestMap = createTestMap(examples2);
+	it("part 1", () => {
+		expect(solution.p1(sampleInput)).toBe(0);
+	});
 
-describe("day <%= it.day %> part 1", () => {
-	createTestSet(testMap1, solution, "p1");
+	it("part 2", () => {
+		expect(solution.p2(sampleInput)).toBe(0);
+	});
 });
-
-describe("day <%= it.day %> part 2", () => {
-	createTestSet(testMap2, solution, "p2");
-});
-
