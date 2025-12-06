@@ -1,6 +1,6 @@
-import fs from "node:fs";
 import { buildDayPaths } from "../utils/cli-helpers";
 import { downloadPuzzle } from "../utils/download";
+import { fileExists } from "../utils/runtime";
 
 export async function readCommand(
 	year: string,
@@ -10,7 +10,7 @@ export async function readCommand(
 ): Promise<void> {
 	const paths = buildDayPaths(year, day, outputDir);
 
-	if (fs.existsSync(paths.puzzle) && !force) {
+	if (fileExists(paths.puzzle) && !force) {
 		console.log(
 			`Puzzle for ${year} day ${day} already exists (use --force to re-download)`,
 		);

@@ -1,8 +1,7 @@
-import fs from "node:fs";
 import { createFromTemplate } from "../utils";
 import { buildDayPaths } from "../utils/cli-helpers";
 import { downloadInput, downloadPuzzle } from "../utils/download";
-import { writeFile } from "../utils/runtime";
+import { fileExists, writeFile } from "../utils/runtime";
 
 export async function scaffoldCommand(
 	year: string,
@@ -12,7 +11,7 @@ export async function scaffoldCommand(
 ): Promise<void> {
 	const paths = buildDayPaths(year, day, outputDir);
 
-	if (fs.existsSync(paths.runner) && !force) {
+	if (fileExists(paths.runner) && !force) {
 		console.log(`Day exists: ${year} day ${day} (use --force to re-scaffold)`);
 		return;
 	}
@@ -27,5 +26,5 @@ export async function scaffoldCommand(
 	await writeFile(paths.sample, "");
 	await downloadInput(year, day, outputDir);
 	await downloadPuzzle(year, day, outputDir);
-	console.log(`Scaffolding complete (don't forget to add sample data)`);
+	console.log("Scaffolding complete (don't forget to add sample data)");
 }

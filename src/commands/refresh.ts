@@ -1,4 +1,4 @@
-import { downloadPuzzle } from "../utils/download";
+import { readCommand } from "./read";
 
 export async function refreshCommand(
 	year: string,
@@ -6,5 +6,5 @@ export async function refreshCommand(
 	outputDir?: string,
 ): Promise<void> {
 	console.log(`Refreshing puzzle for: ${year} day ${day}`);
-	await downloadPuzzle(year, day, outputDir);
+	await readCommand(year, day, true, outputDir);
 }
