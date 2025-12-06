@@ -55,5 +55,8 @@
 		"@types/node": "^24.10.1",
 		"tsdown": "^0.17.0",
 		"typescript": "^5.9.3"
+	},
+	"optionalDependencies": {
+		"tsx": "^4.19.0"
 	}
 }
