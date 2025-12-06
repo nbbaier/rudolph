@@ -5,11 +5,11 @@ Advent of Code CLI - scaffold, run, and manage AoC solutions.
 ## Installation
 
 ```bash
-# With npm
-npm install -g rudolph
-
 # With bun (recommended for best performance)
 bun install -g rudolph
+
+# With npm
+npm install -g rudolph
 
 # With pnpm
 pnpm add -g rudolph
@@ -17,6 +17,14 @@ pnpm add -g rudolph
 # With yarn
 yarn global add rudolph
 ```
+
+### Runtime Requirements
+
+- **Bun**: Full support out of the box (recommended)
+- **Node.js 18+**: Requires `tsx` for running TypeScript solutions. Install it globally or in your project:
+  ```bash
+  npm install -g tsx
+  ```
 
 ## Quick Start
 
@@ -38,12 +46,14 @@ Create a `.env` file in your project root:
 ```
 AOC_SESSION=your-session-cookie
 OUTPUT_DIR=./aoc
+AOC_YEAR=2024
 ```
 
-| Variable      | Description                                        | Default |
-| ------------- | -------------------------------------------------- | ------- |
-| `AOC_SESSION` | Your AoC session cookie (required for downloading) | -       |
-| `OUTPUT_DIR`  | Where to scaffold puzzle files                     | `./aoc` |
+| Variable      | Description                                                         | Default                                      |
+| ------------- | ------------------------------------------------------------------- | -------------------------------------------- |
+| `AOC_SESSION` | Your AoC session cookie (required for downloading)                  | -                                            |
+| `OUTPUT_DIR`  | Where to scaffold puzzle files                                      | `./aoc`                                      |
+| `AOC_YEAR`    | Default year for puzzles                                            | Current year (or previous year before Dec)   |
 
 To get your session cookie:
 
@@ -62,12 +72,12 @@ rudolph scaffold [options]
 
 Options:
   -d, --day <day>         Day number (1-25), defaults to today
-  -y, --year <year>       Year, defaults to current year
+  -y, --year <year>       Year, defaults to current year (or previous year before December)
   -f, --force             Force re-scaffold even if files exist
   -o, --output-dir <dir>  Override output directory
 ```
 
-### `rudolph try`
+### `rudolph try` (alias: `sample`)
 
 Run your solution against `sample.txt`.
 
@@ -77,10 +87,11 @@ rudolph try [options]
 Options:
   -d, --day <day>         Day number (1-25)
   -y, --year <year>       Year
+  -p, --part <part>       Which part to run (1, 2, or both). Default: both
   -o, --output-dir <dir>  Override output directory
 ```
 
-### `rudolph attempt`
+### `rudolph attempt` (alias: `run`)
 
 Run your solution against `input.txt` with timing.
 
@@ -90,6 +101,7 @@ rudolph attempt [options]
 Options:
   -d, --day <day>         Day number (1-25)
   -y, --year <year>       Year
+  -p, --part <part>       Which part to run (1, 2, or both). Default: both
   -o, --output-dir <dir>  Override output directory
 ```
 
