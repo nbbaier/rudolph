@@ -1,4 +1,13 @@
-# rudolph
+# rudolph: an Advent of Code helper
+
+<div align="center">
+  <img src="./banner.png" alt="Description">
+</div>
+
+
+
+
+
 
 Advent of Code CLI - scaffold, run, and manage AoC solutions.
 
