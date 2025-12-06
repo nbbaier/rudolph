@@ -1,4 +1,3 @@
-import fs from "node:fs";
 import path from "node:path";
 import { Defuddle } from "defuddle/node";
 import { JSDOM } from "jsdom";
@@ -11,15 +10,13 @@ import remarkUnlink from "remark-unlink";
 import { unified } from "unified";
 import { stringify as stringifyYaml } from "yaml";
 import { getSession } from "../env";
+import {
+	DownloadError,
+	InvalidSessionError,
+	MissingSessionError,
+} from "../errors";
 import { getDayPath } from ".";
-import { writeFile } from "./runtime";
-
-async function ensureDirectory(filePath: string): Promise<void> {
-	const dir = path.dirname(filePath);
-	if (!fs.existsSync(dir)) {
-		fs.mkdirSync(dir, { recursive: true });
-	}
-}
+import { ensureDirectory, writeFile } from "./runtime";
 
 async function fetchAoCResource(
 	year: string,
@@ -28,9 +25,9 @@ async function fetchAoCResource(
 ): Promise<{ text: string; url: string; dom: JSDOM }> {
 	const session = getSession();
 	if (!session) {
-		console.error("Error: AOC_SESSION not found. Add it to your .env file.\n");
-		process.exit(1);
+		throw new MissingSessionError();
 	}
+
 	const url = `https://adventofcode.com/${year}/day/${Number(day)}${endpoint}`;
 	const res = await fetch(url, {
 		headers: { Cookie: `session=${session}` },
@@ -40,8 +37,19 @@ async function fetchAoCResource(
 	const dom = new JSDOM(text);
 
 	if (!res.ok) {
-		throw new Error(
-			`Fetching ${endpoint} for ${year}-${day} failed: ${res.status} ${res.statusText}`,
+		if (res.status === 400 || res.status === 500) {
+			const bodyText = text.toLowerCase();
+			if (
+				bodyText.includes("log in") ||
+				bodyText.includes("please log in") ||
+				bodyText.includes("puzzle inputs differ")
+			) {
+				throw new InvalidSessionError();
+			}
+		}
+		throw new DownloadError(
+			`Fetching ${endpoint || "puzzle"} for ${year} day ${day} failed: ${res.status} ${res.statusText}`,
+			res.status,
 		);
 	}
 
@@ -53,22 +61,14 @@ export async function downloadInput(
 	day: string,
 	outputDir?: string,
 ): Promise<void> {
-	try {
-		const downloadPath = path.resolve(
-			getDayPath(year, day, outputDir),
-			"input.txt",
-		);
-		console.log(`Downloading input...`);
-		const { text } = await fetchAoCResource(year, day, "/input");
-		await ensureDirectory(downloadPath);
-		await writeFile(downloadPath, text);
-	} catch (error) {
-		if (error instanceof Error) {
-			console.error(error.message);
-			throw error;
-		}
-		throw new Error("Unknown problem occurred while downloading input");
-	}
+	const downloadPath = path.resolve(
+		getDayPath(year, day, outputDir),
+		"input.txt",
+	);
+	console.log("Downloading input...");
+	const { text } = await fetchAoCResource(year, day, "/input");
+	await ensureDirectory(downloadPath);
+	await writeFile(downloadPath, text);
 }
 
 export async function downloadPuzzle(
@@ -76,37 +76,29 @@ export async function downloadPuzzle(
 	day: string,
 	outputDir?: string,
 ): Promise<void> {
-	try {
-		console.log(`Downloading puzzle...`);
-		const downloadPath = path.resolve(
-			getDayPath(year, day, outputDir),
-			"puzzle.md",
-		);
-		const { dom, url } = await fetchAoCResource(year, day, "");
-		const { content } = await Defuddle(dom, url, { markdown: true });
-		const file = await unified()
-			.use(remarkParse)
-			.use(remarkStringify)
-			.use(remarkUnlink)
-			.use(remarkNormalizeHeadings)
-			.use(remarkFrontmatter, ["yaml"])
-			.use(addFrontmatterPlugin, {
-				data: { url, date: `${year}-${day.padStart(2, "0")}` },
-			})
-			.process(content);
+	console.log("Downloading puzzle...");
+	const downloadPath = path.resolve(
+		getDayPath(year, day, outputDir),
+		"puzzle.md",
+	);
+	const { dom, url } = await fetchAoCResource(year, day, "");
+	const { content } = await Defuddle(dom, url, { markdown: true });
+	const file = await unified()
+		.use(remarkParse)
+		.use(remarkStringify)
+		.use(remarkUnlink)
+		.use(remarkNormalizeHeadings)
+		.use(remarkFrontmatter, ["yaml"])
+		.use(addFrontmatterPlugin, {
+			data: { url, date: `${year}-${day.padStart(2, "0")}` },
+		})
+		.process(content);
 
-		await ensureDirectory(downloadPath);
-		await writeFile(
-			downloadPath,
-			String(file).replace(/^(#{1,6}\s+)---\s*(.*?)\s*---\s*$/gm, "$1$2\n"),
-		);
-	} catch (error) {
-		if (error instanceof Error) {
-			console.error(error.message);
-			throw error;
-		}
-		throw new Error("Unknown problem occurred while downloading puzzle");
-	}
+	await ensureDirectory(downloadPath);
+	await writeFile(
+		downloadPath,
+		String(file).replace(/^(#{1,6}\s+)---\s*(.*?)\s*---\s*$/gm, "$1$2\n"),
+	);
 }
 
 function extractTextFromNode(node: unknown): string {
