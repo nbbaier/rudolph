@@ -1,10 +1,10 @@
 import { Command } from "commander";
-import { loadEnvFile } from "./env";
 import { attemptCommand } from "./commands/attempt";
 import { readCommand } from "./commands/read";
 import { refreshCommand } from "./commands/refresh";
 import { scaffoldCommand } from "./commands/scaffold";
 import { tryCommand } from "./commands/try";
+import { loadEnvFile } from "./env";
 import {
 	daySchema,
 	getDefaultDay,

@@ -1,9 +1,11 @@
 import fs from "node:fs/promises";
 
-declare const Bun: {
-	write: (path: string, data: string) => Promise<number>;
-	file: (path: string) => { text: () => Promise<string> };
-} | undefined;
+declare const Bun:
+	| {
+			write: (path: string, data: string) => Promise<number>;
+			file: (path: string) => { text: () => Promise<string> };
+	  }
+	| undefined;
 
 export const isBun = typeof Bun !== "undefined";
 

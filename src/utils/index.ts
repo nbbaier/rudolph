@@ -10,7 +10,11 @@ export function loadFile(filePath: string) {
 	return fs.readFileSync(filePath).toString();
 }
 
-export function getDayPath(year: string, day: string, outputDir?: string): string {
+export function getDayPath(
+	year: string,
+	day: string,
+	outputDir?: string,
+): string {
 	const dir = outputDir ?? getOutputDir();
 	return path.join(dir, year, `day${day.padStart(2, "0")}`);
 }

@@ -54,7 +54,10 @@ export async function downloadInput(
 	outputDir?: string,
 ): Promise<void> {
 	try {
-		const downloadPath = path.resolve(getDayPath(year, day, outputDir), "input.txt");
+		const downloadPath = path.resolve(
+			getDayPath(year, day, outputDir),
+			"input.txt",
+		);
 		console.log(`Downloading input...`);
 		const { text } = await fetchAoCResource(year, day, "/input");
 		await ensureDirectory(downloadPath);
@@ -75,7 +78,10 @@ export async function downloadPuzzle(
 ): Promise<void> {
 	try {
 		console.log(`Downloading puzzle...`);
-		const downloadPath = path.resolve(getDayPath(year, day, outputDir), "puzzle.md");
+		const downloadPath = path.resolve(
+			getDayPath(year, day, outputDir),
+			"puzzle.md",
+		);
 		const { dom, url } = await fetchAoCResource(year, day, "");
 		const { content } = await Defuddle(dom, url, { markdown: true });
 		const file = await unified()
