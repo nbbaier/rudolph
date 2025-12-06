@@ -1,4 +1,5 @@
 import { Command } from "commander";
+import { loadEnvFile } from "./env";
 import { attemptCommand } from "./commands/attempt";
 import { readCommand } from "./commands/read";
 import { refreshCommand } from "./commands/refresh";
@@ -11,9 +12,14 @@ import {
 	yearSchema,
 } from "./utils/cli-helpers";
 
+loadEnvFile();
+
 const program = new Command();
 
-program.name("aoc").description("Advent of Code CLI").version("1.0.0");
+program
+	.name("rudolph")
+	.description("Advent of Code CLI - scaffold, run, and manage AoC solutions")
+	.version("1.0.0");
 
 program
 	.command("scaffold")
@@ -21,10 +27,11 @@ program
 	.option("-d, --day <day>", "Day number (1-25)", getDefaultDay())
 	.option("-y, --year <year>", "Year (e.g., 2024)", getDefaultYear())
 	.option("-f, --force", "Force re-download even if files exist")
+	.option("-o, --output-dir <dir>", "Output directory for generated files")
 	.action(async (options) => {
 		const day = daySchema.parse(options.day);
 		const year = yearSchema.parse(options.year);
-		await scaffoldCommand(year, day, options.force || false);
+		await scaffoldCommand(year, day, options.force || false, options.outputDir);
 	});
 
 program
@@ -32,10 +39,11 @@ program
 	.description("Run solution against sample.txt")
 	.option("-d, --day <day>", "Day number (1-25)", getDefaultDay())
 	.option("-y, --year <year>", "Year (e.g., 2024)", getDefaultYear())
+	.option("-o, --output-dir <dir>", "Output directory for generated files")
 	.action(async (options) => {
 		const day = daySchema.parse(options.day);
 		const year = yearSchema.parse(options.year);
-		await tryCommand(year, day);
+		await tryCommand(year, day, options.outputDir);
 	});
 
 program
@@ -43,10 +51,11 @@ program
 	.description("Run solution against input.txt (with timing)")
 	.option("-d, --day <day>", "Day number (1-25)", getDefaultDay())
 	.option("-y, --year <year>", "Year (e.g., 2024)", getDefaultYear())
+	.option("-o, --output-dir <dir>", "Output directory for generated files")
 	.action(async (options) => {
 		const day = daySchema.parse(options.day);
 		const year = yearSchema.parse(options.year);
-		await attemptCommand(year, day);
+		await attemptCommand(year, day, options.outputDir);
 	});
 
 program
@@ -55,10 +64,11 @@ program
 	.option("-d, --day <day>", "Day number (1-25)", getDefaultDay())
 	.option("-y, --year <year>", "Year (e.g., 2024)", getDefaultYear())
 	.option("-f, --force", "Force re-download even if files exist")
+	.option("-o, --output-dir <dir>", "Output directory for generated files")
 	.action(async (options) => {
 		const day = daySchema.parse(options.day);
 		const year = yearSchema.parse(options.year);
-		await readCommand(year, day, options.force || false);
+		await readCommand(year, day, options.force || false, options.outputDir);
 	});
 
 program
@@ -66,10 +76,11 @@ program
 	.description("Re-download puzzle (useful after solving part 1)")
 	.option("-d, --day <day>", "Day number (1-25)", getDefaultDay())
 	.option("-y, --year <year>", "Year (e.g., 2024)", getDefaultYear())
+	.option("-o, --output-dir <dir>", "Output directory for generated files")
 	.action(async (options) => {
 		const day = daySchema.parse(options.day);
 		const year = yearSchema.parse(options.year);
-		await refreshCommand(year, day);
+		await refreshCommand(year, day, options.outputDir);
 	});
 
 program.parseAsync().catch((error) => {

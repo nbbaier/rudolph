@@ -1,5 +1,6 @@
 import path from "node:path";
 import { z } from "zod";
+import { getOutputDir } from "../env";
 import { getDayPath, loadFile } from ".";
 
 export const daySchema = z
@@ -16,8 +17,9 @@ export function getDefaultYear(): string {
 	return new Date().getFullYear().toString();
 }
 
-export function buildDayPaths(year: string, day: string) {
-	const dayPath = getDayPath(year, day);
+export function buildDayPaths(year: string, day: string, outputDir?: string) {
+	const dir = outputDir ?? getOutputDir();
+	const dayPath = getDayPath(year, day, dir);
 	return {
 		dayPath,
 		runner: path.resolve(dayPath, "index.ts"),

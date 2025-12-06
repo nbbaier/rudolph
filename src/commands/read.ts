@@ -6,8 +6,9 @@ export async function readCommand(
 	year: string,
 	day: string,
 	force: boolean,
+	outputDir?: string,
 ): Promise<void> {
-	const paths = buildDayPaths(year, day);
+	const paths = buildDayPaths(year, day, outputDir);
 
 	if (fs.existsSync(paths.puzzle) && !force) {
 		console.log(
@@ -17,5 +18,5 @@ export async function readCommand(
 	}
 
 	console.log(`Getting puzzle text for: ${year} day ${day}`);
-	await downloadPuzzle(year, day);
+	await downloadPuzzle(year, day, outputDir);
 }

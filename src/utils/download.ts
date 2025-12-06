@@ -10,8 +10,9 @@ import remarkStringify from "remark-stringify";
 import remarkUnlink from "remark-unlink";
 import { unified } from "unified";
 import { stringify as stringifyYaml } from "yaml";
-
+import { getSession } from "../env";
 import { getDayPath } from ".";
+import { writeFile } from "./runtime";
 
 async function ensureDirectory(filePath: string): Promise<void> {
 	const dir = path.dirname(filePath);
@@ -25,13 +26,14 @@ async function fetchAoCResource(
 	day: string,
 	endpoint: string,
 ): Promise<{ text: string; url: string; dom: JSDOM }> {
-	if (!Bun.env.AOC_SESSION) {
-		console.error("Error: AOC_SESSION environment variable is not set.\n");
+	const session = getSession();
+	if (!session) {
+		console.error("Error: AOC_SESSION not found. Add it to your .env file.\n");
 		process.exit(1);
 	}
 	const url = `https://adventofcode.com/${year}/day/${Number(day)}${endpoint}`;
 	const res = await fetch(url, {
-		headers: { Cookie: `session=${Bun.env.AOC_SESSION}` },
+		headers: { Cookie: `session=${session}` },
 	});
 
 	const text = await res.text();
@@ -46,13 +48,17 @@ async function fetchAoCResource(
 	return { text, url, dom };
 }
 
-export async function downloadInput(year: string, day: string): Promise<void> {
+export async function downloadInput(
+	year: string,
+	day: string,
+	outputDir?: string,
+): Promise<void> {
 	try {
-		const downloadPath = path.resolve(getDayPath(year, day), "input.txt");
+		const downloadPath = path.resolve(getDayPath(year, day, outputDir), "input.txt");
 		console.log(`Downloading input...`);
 		const { text } = await fetchAoCResource(year, day, "/input");
 		await ensureDirectory(downloadPath);
-		await Bun.write(downloadPath, text);
+		await writeFile(downloadPath, text);
 	} catch (error) {
 		if (error instanceof Error) {
 			console.error(error.message);
@@ -62,10 +68,14 @@ export async function downloadInput(year: string, day: string): Promise<void> {
 	}
 }
 
-export async function downloadPuzzle(year: string, day: string): Promise<void> {
+export async function downloadPuzzle(
+	year: string,
+	day: string,
+	outputDir?: string,
+): Promise<void> {
 	try {
 		console.log(`Downloading puzzle...`);
-		const downloadPath = path.resolve(getDayPath(year, day), "puzzle.md");
+		const downloadPath = path.resolve(getDayPath(year, day, outputDir), "puzzle.md");
 		const { dom, url } = await fetchAoCResource(year, day, "");
 		const { content } = await Defuddle(dom, url, { markdown: true });
 		const file = await unified()
@@ -80,7 +90,7 @@ export async function downloadPuzzle(year: string, day: string): Promise<void> {
 			.process(content);
 
 		await ensureDirectory(downloadPath);
-		await Bun.write(
+		await writeFile(
 			downloadPath,
 			String(file).replace(/^(#{1,6}\s+)---\s*(.*?)\s*---\s*$/gm, "$1$2\n"),
 		);
