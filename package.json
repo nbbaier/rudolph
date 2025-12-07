@@ -1,7 +1,6 @@
 {
 	"name": "rudolph-monorepo",
 	"version": "0.1.0",
-	"private": true,
 	"description": "Advent of Code CLI - monorepo containing rudolph CLI and create-rudolph scaffolding tool",
 	"workspaces": [
 		"packages/*"
@@ -16,7 +15,7 @@
 		"format:fix": "biome format . --write",
 		"typecheck": "bun run --filter '*' typecheck",
 		"publish:cli:next": "npm publish --workspace packages/rudolph --tag next",
-		"publish:create-cli:next": "npm publish --workspace packages/create-rudolph --tag next",
+		"publish:create:next": "npm publish --workspace packages/create-rudolph --tag next",
 		"publish:next": "npm publish --workspace packages/rudolph --tag next && npm publish --workspace packages/create-rudolph --tag next"
 	},
 	"devDependencies": {

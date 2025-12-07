@@ -5,10 +5,13 @@
 	"type": "module",
 	"author": "nbbaier",
 	"license": "MIT",
-	"repository": "https://github.com/nbbaier/rudolph",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/nbbaier/rudolph.git"
+	},
 	"bugs": "https://github.com/nbbaier/rudolph/issues",
 	"bin": {
-		"create-rudolph": "./dist/index.mjs"
+		"create-rudolph": "dist/index.mjs"
 	},
 	"files": [
 		"dist"
@@ -24,6 +27,9 @@
 		"test": "echo 'No tests yet'",
 		"prepublishOnly": "npm run build",
 		"typecheck": "tsc --noEmit"
+	},
+	"publishConfig": {
+		"access": "public"
 	},
 	"keywords": [
 		"advent-of-code",
