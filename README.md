@@ -107,7 +107,6 @@ aoc/
 └── 2024/
     └── day01/
         ├── index.ts      # Solution file
-        ├── day01.test.ts # Test file
         ├── puzzle.md     # Puzzle description
         ├── input.txt     # Your puzzle input
         ├── sample.txt    # Sample input (fill this in)

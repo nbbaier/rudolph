@@ -21,10 +21,6 @@ export async function setupCommand(
 	console.log(`Setting up: ${year} day ${day}`);
 
 	await createFromTemplate("runner", paths.runner);
-	await createFromTemplate("tests", paths.test, {
-		day,
-		year,
-	});
 	await writeFile(paths.sample, "");
 	await downloadInput(year, day, outputDir);
 	await downloadPuzzle(year, day, outputDir);
