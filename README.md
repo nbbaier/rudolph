@@ -33,15 +33,32 @@ yarn global add rudolph
 ## Quick Start
 
 ```bash
-# Initialize a new AoC workspace (interactive setup)
-rudolph init
+# Create a new AoC workspace (recommended)
+bunx create-rudolph my-aoc-workspace
+# or with npx
+npx create-rudolph my-aoc-workspace
 
-# Or manually set up today's puzzle
-echo "AOC_SESSION=your-session-cookie" > .env
+# Then navigate to your workspace
+cd my-aoc-workspace
+
+# Set up today's puzzle
 rudolph setup
 
-# Set up a specific day
+# Or set up a specific day
 rudolph setup 2024 1
+```
+
+Alternatively, you can manually set up in an existing project:
+
+```bash
+# Install rudolph globally or in your project
+bun install -g rudolph
+
+# Create .env file with your session cookie
+echo "AOC_SESSION=your-session-cookie" > .env
+
+# Set up today's puzzle
+rudolph setup
 ```
 
 ## Configuration
@@ -81,7 +98,6 @@ This sends requests with: `rudolph/1.0.0 (you@example.com)`. If not set, request
 
 ### Setup & Initialization
 
--  `rudolph init` - Interactive bootstrap for a new AoC workspace (creates `.env`, output directory, fetches session)
 -  `rudolph setup [year] [day]` - Create day folder, generate solution templates, fetch input and puzzle. Options: `-f/--force` (warns if overwriting)
 
 ### Fetch Data
