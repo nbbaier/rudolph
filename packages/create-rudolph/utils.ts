@@ -28,7 +28,7 @@ export function label(
 
 // Strip ANSI escape codes for accurate length calculation
 function stripAnsi(text: string): string {
-	// biome-ignore lint/suspicious/noControlCharactersInRegex: ANSI escape code regex requires control character
+	// biome-ignore lint/suspicious/noControlCharactersInRegex: we want to strip ANSI escape codes
 	return text.replace(/\x1B\[[0-9;]*m/g, "");
 }
 
