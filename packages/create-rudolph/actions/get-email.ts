@@ -1,5 +1,6 @@
 import { confirm, isCancel, text } from "@clack/prompts";
 import type { Context } from "../context";
+import { getGitEmail } from "../git-utils";
 import { info, title } from "../messages";
 
 export async function getEmail(
@@ -31,10 +32,13 @@ export async function getEmail(
 		return;
 	}
 
+	// Try to get git email to pre-populate
+	const gitEmail = await getGitEmail();
+
 	const email = await text({
 		message: `${title("email")}What is your email address?`,
 		placeholder: "example@example.com",
-		initialValue: "",
+		initialValue: gitEmail || "",
 	});
 
 	if (isCancel(email)) {

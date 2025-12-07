@@ -11,7 +11,7 @@
 		"index.ts",
 		"actions",
 		"context.ts",
-		"data",
+		"git-utils.ts",
 		"messages.ts",
 		"shared.ts",
 		"shell.ts",

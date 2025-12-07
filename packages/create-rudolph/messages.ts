@@ -19,9 +19,10 @@ export const info = async (prefix: string, text: string) => {
 	}
 };
 
-export const banner = () => {
+export const banner = (name?: string) => {
+	const greeting = name ? `Hey ${name}! Let's` : "Let's";
 	log(
-		`${label("rudolph", color.bgRed, color.whiteBright)}  🎄 Let's set up your Advent of Code workshop`,
+		`${label("rudolph", color.bgRed, color.whiteBright)}  🎄 ${greeting} set up your Advent of Code workshop`,
 	);
 };
 
