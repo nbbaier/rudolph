@@ -1,7 +1,4 @@
 import fs from "node:fs";
-import path from "node:path";
-import { info, log } from "./messages";
-import { shell } from "./shell";
 
 // Some existing files and directories can be safely ignored when checking if a directory is a valid project directory.
 // https://github.com/facebook/create-react-app/blob/d960b9e38c062584ff6cfb1a70e1512509a966e7/packages/create-react-app/createReactApp.js#L907-L934
@@ -63,34 +60,4 @@ export function toValidName(projectName: string) {
 		.replace(/[^a-z\d\-~]+/g, "-")
 		.replace(/^-+/, "")
 		.replace(/-+$/, "");
-}
-
-export async function writeToEnvFile({
-	variable,
-	cwd,
-}: {
-	variable: { key: string; value: string };
-	cwd: string;
-}): Promise<void> {
-	if (await ensureFile(path.resolve(cwd, ".env"))) {
-		await shell("echo", [
-			`${variable.key}=${variable.value}`,
-			">>",
-			path.resolve(cwd, ".env"),
-		]);
-	} else {
-		await shell("echo", [
-			`${variable.key}=${variable.value}`,
-			">",
-			path.resolve(cwd, ".env"),
-		]);
-	}
-}
-
-async function ensureFile(filePath: string): Promise<boolean> {
-	if (!fs.existsSync(filePath)) {
-		await fs.promises.writeFile(filePath, "");
-		return true;
-	}
-	return false;
 }

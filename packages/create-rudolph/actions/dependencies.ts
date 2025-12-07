@@ -1,27 +1,29 @@
 import fs from "node:fs";
 import path from "node:path";
-import { color } from "@astrojs/cli-kit";
+import { confirm, isCancel } from "@clack/prompts";
 import type { Context } from "../context";
-import { error, info, title } from "../messages";
-import { shell } from "../shell";
+import { exec } from "../exec";
+import { error, info } from "../messages";
+import { color } from "../utils";
 
 export async function dependencies(
 	ctx: Pick<
 		Context,
-		"install" | "yes" | "prompt" | "packageManager" | "cwd" | "dryRun" | "tasks"
+		"install" | "yes" | "packageManager" | "cwd" | "dryRun" | "tasks"
 	>,
 ) {
-	let deps = ctx.install ?? ctx.yes;
-	if (deps === undefined) {
-		({ deps } = await ctx.prompt({
-			name: "deps",
-			type: "confirm",
-			label: title("deps"),
-			message: `Install dependencies?`,
-			hint: "recommended",
-			initial: true,
-		}));
-		ctx.install = deps;
+	let deps: boolean | symbol = ctx.install ?? ctx.yes ?? false;
+	if (deps === false) {
+		deps = await confirm({
+			message: "Install dependencies?",
+			initialValue: true,
+		});
+
+		if (isCancel(deps)) {
+			deps = false;
+		}
+
+		ctx.install = deps as boolean;
 	}
 
 	if (ctx.dryRun) {
@@ -32,11 +34,11 @@ export async function dependencies(
 			start: `Dependencies installing with ${ctx.packageManager}...`,
 			end: "Dependencies installed",
 			onError: (e) => {
-				error("error", e);
+				error("error", e as string);
 				error(
 					"error",
 					`Dependencies failed to install, please run ${color.bold(
-						ctx.packageManager + " install",
+						`${ctx.packageManager} install`,
 					)} to install them manually after setup.`,
 				);
 			},
@@ -45,8 +47,8 @@ export async function dependencies(
 		});
 	} else {
 		await info(
-			ctx.yes === false ? "deps [skip]" : "No problem!",
-			"Remember to install dependencies after setup.",
+			"Skipped",
+			`Run ${ctx.packageManager} install when you're ready`,
 		);
 	}
 }
@@ -59,11 +61,7 @@ async function install({
 	cwd: string;
 }) {
 	if (packageManager === "yarn") await ensureYarnLock({ cwd });
-	return shell(packageManager, ["install"], {
-		cwd,
-		timeout: 90_000,
-		stdio: "ignore",
-	});
+	return exec(packageManager, ["install"], { cwd, timeout: 90_000 });
 }
 
 /**

@@ -2,21 +2,12 @@ import fs from "node:fs";
 import fsPromises from "node:fs/promises";
 import path from "node:path";
 
-declare const Bun:
-	| {
-			write: (path: string, data: string) => Promise<number>;
-			file: (path: string) => { text: () => Promise<string> };
-	  }
-	| undefined;
+declare const Bun: unknown;
 
 export const isBun = typeof Bun !== "undefined";
 
 export async function writeFile(filePath: string, data: string): Promise<void> {
-	if (isBun && typeof Bun !== "undefined") {
-		await Bun.write(filePath, data);
-	} else {
-		await fsPromises.writeFile(filePath, data);
-	}
+	await fsPromises.writeFile(filePath, data);
 }
 
 export async function ensureDirectory(filePath: string): Promise<void> {

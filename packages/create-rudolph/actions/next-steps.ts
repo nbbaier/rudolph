@@ -3,20 +3,17 @@ import type { Context } from "../context";
 import { nextSteps } from "../messages";
 
 export async function next(
-	ctx: Pick<Context, "hat" | "tie" | "cwd" | "packageManager">,
+	ctx: Pick<Context, "cwd" | "projectName" | "packageManager">,
 ) {
-	const projectDir = path.relative(process.cwd(), ctx.cwd);
+	const projectDir = ctx.projectName || path.relative(process.cwd(), ctx.cwd);
 
 	const commandMap: { [key: string]: string } = {
-		npm: "npm run dev",
-		bun: "bun run dev",
-		yarn: "yarn dev",
-		pnpm: "pnpm dev",
+		npm: "npm run",
+		bun: "bun run",
+		yarn: "yarn",
+		pnpm: "pnpm",
 	};
 
-	const devCmd =
-		commandMap[ctx.packageManager as keyof typeof commandMap] || "npm run dev";
-	await nextSteps({ projectDir, devCmd });
-
-	return;
+	const pmPrefix = commandMap[ctx.packageManager] || "npm run";
+	await nextSteps({ projectDir, pmPrefix });
 }

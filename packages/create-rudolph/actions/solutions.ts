@@ -1,74 +1,64 @@
 import path from "node:path";
+import { isCancel, text } from "@clack/prompts";
 import type { Context } from "../context";
-import { info, title } from "../messages";
-import { isEmpty, toValidName } from "../shared";
+import { info } from "../messages";
+import { isEmpty } from "../shared";
 
 export async function solutions(
 	ctx: Pick<
 		Context,
 		| "tasks"
 		| "yes"
-		| "prompt"
 		| "exit"
 		| "solutionsPath"
 		| "solutionsDir"
 		| "dryRun"
 		| "projectName"
+		| "cwd"
 	>,
 ) {
 	if (ctx.yes && ctx.projectName) {
-		ctx.solutionsDir = `solutions`;
-		ctx.solutionsPath = path.resolve(ctx.projectName, `./${ctx.solutionsDir}`);
+		ctx.solutionsDir = "solutions";
+		ctx.solutionsPath = path.resolve(ctx.projectName, ctx.solutionsDir);
 		await info(
 			"dir",
-			`Solutions directory will be created at ./${ctx.solutionsPath}`,
+			`Solutions will live in ./${ctx.projectName}/${ctx.solutionsDir}`,
 		);
 		return;
 	}
 
-	const { name } = await ctx.prompt({
-		name: "name",
-		type: "text",
-		label: title("dir"),
-		message: "What should we name the solutions directory?",
-		initial: `./${ctx.projectName}/solutions`,
+	const projectRoot = ctx.cwd || ctx.projectName || ".";
+
+	const name = await text({
+		message: "Folder for your daily solutions (inside the project):",
+		placeholder: "solutions",
+		initialValue: "solutions",
 		validate(value: string) {
-			if (!isEmpty(value)) {
+			if (!value) return "Please enter a folder name.";
+			const candidate = path.resolve(projectRoot, value);
+			if (!isEmpty(candidate)) {
 				return `Directory is not empty!`;
 			}
 			if (value.match(/[^\x20-\x7E]/g) !== null)
 				return `Invalid non-printable character present!`;
-			return true;
+			return undefined;
 		},
 	});
+
+	if (isCancel(name)) {
+		ctx.exit(1);
+	}
 
 	const { projectName } = ctx;
 	if (!projectName) {
 		ctx.exit(1);
 	}
 
-	ctx.solutionsDir = name?.trim() ?? "";
+	ctx.solutionsDir = typeof name === "string" ? name.trim() : "solutions";
 	ctx.solutionsPath = path.resolve(projectName, ctx.solutionsDir);
+
 	if (ctx.dryRun) {
 		await info("--dry-run", "Skipping solutions directory creation");
 		return;
-	} else {
-		let solutionsPath = ctx.solutionsPath;
-		if (solutionsPath?.trim() === "." || solutionsPath?.trim() === "./") {
-			const parts = process.cwd().split(path.sep);
-			solutionsPath = parts[parts.length - 1] ?? "";
-		} else if (
-			solutionsPath?.startsWith("./") ||
-			solutionsPath?.startsWith("../")
-		) {
-			const parts = solutionsPath.split("/");
-			solutionsPath = parts[parts.length - 1] ?? "";
-		}
-		ctx.solutionsPath = toValidName(solutionsPath ?? "");
-	}
-
-	const { solutionsPath } = ctx;
-	if (!solutionsPath) {
-		ctx.exit(1);
 	}
 }

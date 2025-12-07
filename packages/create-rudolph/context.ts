@@ -1,116 +1,60 @@
-import os from "node:os";
-import type { Task } from "@astrojs/cli-kit";
-import { prompt } from "@astrojs/cli-kit";
-import { random } from "@astrojs/cli-kit/utils";
 import arg from "arg";
-import getSeasonalData from "./data/seasonal";
-import { getName } from "./messages";
 
-export const getVersion = async (
-	_packageManager: string,
-	_packageName: string,
-	_packageTag = "latest",
-	_fallback = "",
-): Promise<string> => {
-	return "1";
-};
+export interface Task {
+	pending?: string;
+	start?: string;
+	end?: string;
+	while?: () => Promise<unknown>;
+	onError?: (error: unknown) => void;
+}
 
 export interface Context {
-	help: boolean;
-	prompt: typeof prompt;
 	cwd: string;
 	packageManager: string;
-	username: Promise<string>;
-	version: Promise<string>;
-	skipHouston: boolean;
-	fancy?: boolean;
-	add?: string[];
 	dryRun?: boolean;
 	yes?: boolean;
 	projectName?: string;
-	template?: string;
-	ref: string;
 	install?: boolean;
 	git?: boolean;
 	solutionsDir?: string;
-	typescript?: string;
-	stdin?: typeof process.stdin;
-	stdout?: typeof process.stdout;
-	exit(code: number): never;
-	welcome?: string;
-	hat?: string;
-	tie?: string;
 	solutionsPath?: string;
-	tasks: Task[];
 	aocSession?: string;
 	aocUserAgent?: string;
 	aocYear?: string;
-	firstDay?: boolean;
-}
-
-function getPackageTag(
-	packageSpecifier: string | undefined,
-): string | undefined {
-	switch (packageSpecifier) {
-		case "alpha":
-		case "beta":
-		case "rc":
-			return packageSpecifier;
-		// Will fallback to latest
-		case undefined:
-		default:
-			return undefined;
-	}
+	tasks: Task[];
+	exit(code: number): never;
 }
 
 export async function getContext(argv: string[]): Promise<Context> {
-	const packageSpecifier = argv
-		.find((argItem) => /^(astro|create-astro)@/.exec(argItem))
-		?.split("@")[1];
-
 	const flags = arg(
 		{
-			"--template": String,
-			"--ref": String,
 			"--yes": Boolean,
 			"--no": Boolean,
 			"--install": Boolean,
 			"--no-install": Boolean,
 			"--git": Boolean,
 			"--no-git": Boolean,
-			"--skip-houston": Boolean,
 			"--dry-run": Boolean,
-			"--help": Boolean,
-			"--fancy": Boolean,
-			"--add": [String],
-			"--solutions-path": String,
-			"-y": "--yes",
-			"-n": "--no",
-			"-h": "--help",
 			"--aoc-session": String,
 			"--aoc-user-agent": String,
 			"--aoc-year": String,
 			"--first-day": Boolean,
+			"-y": "--yes",
+			"-n": "--no",
 		},
 		{ argv, permissive: true },
 	);
 
 	const packageManager = detectPackageManager() ?? "npm";
-	const cwd = flags["_"][0];
+	const cwd = flags._[0];
 	let {
-		"--help": help = false,
-		"--template": template,
 		"--no": no,
 		"--yes": yes,
 		"--install": install,
 		"--no-install": noInstall,
 		"--git": git,
 		"--no-git": noGit,
-		"--fancy": fancy,
-		"--skip-houston": skipHouston,
 		"--dry-run": dryRun,
-		"--ref": ref,
-		"--add": add,
 	} = flags;
 	const projectName = cwd;
 
@@ -120,33 +64,10 @@ export async function getContext(argv: string[]): Promise<Context> {
 		if (git === undefined) git = false;
 	}
 
-	skipHouston =
-		((os.platform() === "win32" && !fancy) || skipHouston) ??
-		[yes, no, install, git].some((v) => v !== undefined);
-
-	const { messages, hats, ties } = getSeasonalData({ fancy });
-
 	const context: Context = {
-		help,
-		prompt,
 		packageManager,
-		username: getName(),
-		version: getVersion(
-			packageManager,
-			"astro",
-			getPackageTag(packageSpecifier),
-			process.env.ASTRO_VERSION,
-		),
-		skipHouston,
-		fancy,
-		add,
 		dryRun,
 		projectName,
-		template,
-		ref: ref ?? "latest",
-		welcome: random(messages),
-		hat: hats ? random(hats) : undefined,
-		tie: ties ? random(ties) : undefined,
 		yes,
 		install: install ?? (noInstall ? false : undefined),
 		git: git ?? (noGit ? false : undefined),
