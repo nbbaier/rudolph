@@ -35,7 +35,10 @@
 	"dependencies": {
 		"@clack/prompts": "^0.11.0",
 		"commander": "^14.0.2",
+		"defuddle": "^0.6.6",
 		"eta": "^4.4.1",
+		"jsdom": "^24.1.0",
+		"mdast": "^3.0.0",
 		"picocolors": "^1.1.1",
 		"remark-frontmatter": "^5.0.0",
 		"remark-normalize-headings": "^4.0.0",
@@ -47,6 +50,7 @@
 		"zod": "^4.1.13"
 	},
 	"devDependencies": {
+		"@types/mdast": "^4.0.4",
 		"@types/jsdom": "^27.0.0",
 		"@types/node": "^24.10.1",
 		"tsdown": "^0.17.0"
