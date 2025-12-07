@@ -1,0 +1,59 @@
+{
+	"name": "rudolph",
+	"version": "1.0.0",
+	"description": "Advent of Code CLI - scaffold, run, and manage AoC solutions",
+	"type": "module",
+	"bin": {
+		"rudolph": "./dist/index.mjs"
+	},
+	"files": [
+		"dist"
+	],
+	"exports": {
+		".": {
+			"import": "./dist/index.mjs"
+		}
+	},
+	"scripts": {
+		"build": "tsdown && cp -r src/templates dist/templates",
+		"dev": "bun src/index.ts",
+		"test": "bun test",
+		"prepublishOnly": "npm run build",
+		"typecheck": "tsc --noEmit"
+	},
+	"engines": {
+		"bun": ">=1.3.3",
+		"node": ">=18"
+	},
+	"keywords": [
+		"advent-of-code",
+		"aoc",
+		"cli",
+		"scaffold"
+	],
+	"license": "MIT",
+	"dependencies": {
+		"@clack/prompts": "^0.11.0",
+		"commander": "^14.0.2",
+		"defuddle": "^0.6.6",
+		"eta": "^4.4.1",
+		"jsdom": "^27.2.0",
+		"picocolors": "^1.1.1",
+		"remark-frontmatter": "^5.0.0",
+		"remark-normalize-headings": "^4.0.0",
+		"remark-parse": "^11.0.0",
+		"remark-stringify": "^11.0.0",
+		"remark-unlink": "^5.0.0",
+		"unified": "^11.0.5",
+		"yaml": "^2.8.2",
+		"zod": "^4.1.13"
+	},
+	"devDependencies": {
+		"@types/jsdom": "^27.0.0",
+		"@types/node": "^24.10.1",
+		"tsdown": "^0.17.0"
+	},
+	"optionalDependencies": {
+		"tsx": "^4.19.0"
+	}
+}
