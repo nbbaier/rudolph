@@ -41,6 +41,44 @@ export const bannerAbort = () =>
 		`\n${label("rudolph", color.bgRed, color.whiteBright)}  🎄 No Rudolph to guide the sleigh!`,
 	);
 
+export const nextSteps = async ({
+	projectDir,
+	pmPrefix,
+}: {
+	projectDir: string;
+	pmPrefix: string;
+}) => {
+	const prefix = " ".repeat(3);
+	await sleep(200);
+	log(
+		`\n ${color.bgCyan(` ${color.black("next")} `)}  ${color.bold(
+			"Your Advent of Code workspace is ready!",
+		)}`,
+	);
+
+	await sleep(100);
+	if (projectDir && projectDir !== ".") {
+		const dirPath = projectDir.includes(" ")
+			? `"./${projectDir}"`
+			: `./${projectDir}`;
+		log(`\n${prefix}Enter your project directory:`);
+		log(`${prefix}${color.cyan(`cd ${dirPath}`)}`);
+	}
+
+	await sleep(100);
+	log(`\n${prefix}Setup a day (defaults to today):`);
+	log(`${prefix}${color.cyan(`${pmPrefix} setup`)}`);
+
+	await sleep(100);
+	log(`\n${prefix}Run your solutions:`);
+	log(`${prefix}${color.cyan(`${pmPrefix} run input`)}  ${color.dim("# Run on real input")}`);
+	log(`${prefix}${color.cyan(`rudolph run sample`)}  ${color.dim("# Run on sample input")}`);
+
+	await sleep(100);
+	log(`\n${prefix}Happy coding! 🎄✨`);
+	await sleep(200);
+};
+
 let _registry: string;
 async function getRegistry(packageManager: string): Promise<string> {
 	if (_registry) return _registry;

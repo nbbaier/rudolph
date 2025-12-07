@@ -6,6 +6,7 @@ import { getSession } from "./actions/get-session";
 import { getYear } from "./actions/get-year";
 import { git } from "./actions/git";
 import { intro } from "./actions/intro";
+import { next } from "./actions/next-steps";
 import { projectName } from "./actions/project-name";
 import { scaffold } from "./actions/scaffold";
 import { solutions } from "./actions/solutions";
@@ -35,29 +36,11 @@ export async function main() {
 	for (const step of steps) {
 		await step(ctx);
 	}
-	console.log("");
 
-	const labels = {
-		start: "Project initializing...",
-		end: "Project initialized!",
-	};
+	// TODO: Execute tasks here (e.g., scaffold, install deps, init git)
+	// await tasks(ctx.tasks);
 
-	console.log({
-		projectName: ctx.projectName,
-		solutionsDir: ctx.solutionsDir,
-		solutionsPath: ctx.solutionsPath,
-		aocSession: ctx.aocSession,
-		aocUserAgent: ctx.aocUserAgent,
-		aocYear: ctx.aocYear,
-		git: ctx.git,
-		firstDay: ctx.firstDay,
-		install: ctx.install,
-		yes: ctx.yes,
-		tasks: ctx.tasks,
-	});
-	// await tasks(labels, ctx.tasks);
-
-	// await next(ctx);
+	await next(ctx);
 }
 
 await main();
