@@ -84,7 +84,7 @@ async function handlePart(
 		console.log("AoC asked to wait before retrying.");
 	}
 	if (submission.status === "correct" && part === "1" && refreshAfter) {
-		await refreshCommand(year, day, outputDir);
+		await refreshCommand(year, day, false, outputDir);
 	}
 	return entry;
 }

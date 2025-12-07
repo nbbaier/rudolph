@@ -1,3 +1,4 @@
+import { createRequire } from "node:module";
 import { Command } from "commander";
 import { answerCommand } from "./commands/answer";
 import { attemptCommand } from "./commands/attempt";
@@ -20,6 +21,9 @@ import {
 	yearSchema,
 } from "./utils/cli-helpers";
 
+const require = createRequire(import.meta.url);
+const { version } = require("../package.json") as { version: string };
+
 loadEnvFile();
 
 const program = new Command();
@@ -29,7 +33,7 @@ program
 	.description(
 		"Advent of Code CLI - setup, run, submit, and track AoC solutions",
 	)
-	.version("1.0.0");
+	.version(version);
 
 withDayYearOptions(
 	program

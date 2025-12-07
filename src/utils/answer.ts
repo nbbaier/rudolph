@@ -1,7 +1,5 @@
-import path from "node:path";
 import { getSession } from "../env";
 import { InvalidSessionError, MissingSessionError } from "../errors";
-import { getDayPath } from ".";
 import { type GuessEntry, recordGuess, type SubmissionStatus } from "./guesses";
 
 export interface SubmissionResult {
@@ -89,12 +87,4 @@ export async function recordSubmission(
 	const full: GuessEntry = { ...entry, timestamp };
 	await recordGuess(full, outputDir);
 	return full;
-}
-
-export function getProgressPath(
-	year: string,
-	day: string,
-	outputDir?: string,
-): string {
-	return path.join(getDayPath(year, day, outputDir), "progress.json");
 }

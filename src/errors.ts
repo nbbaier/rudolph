@@ -33,7 +33,7 @@ export class InvalidSessionError extends RudolphError {
 
 export class RunnerNotFoundError extends RudolphError {
 	constructor(path: string) {
-		super(`Runner not found at ${path}. Have you run "rudolph scaffold"?`);
+		super(`Runner not found at ${path}. Have you run "rudolph setup"?`);
 		this.name = "RunnerNotFoundError";
 	}
 }
@@ -50,7 +50,7 @@ export class InvalidRunnerError extends RudolphError {
 export class InputNotFoundError extends RudolphError {
 	constructor(path: string) {
 		super(
-			`Input file not found at ${path}. Have you run "rudolph scaffold" or filled in the sample?`,
+			`Input file not found at ${path}. Have you run "rudolph setup" or filled in the sample?`,
 		);
 		this.name = "InputNotFoundError";
 	}

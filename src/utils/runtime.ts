@@ -19,13 +19,6 @@ export async function writeFile(filePath: string, data: string): Promise<void> {
 	}
 }
 
-export async function readFile(filePath: string): Promise<string> {
-	if (isBun && typeof Bun !== "undefined") {
-		return Bun.file(filePath).text();
-	}
-	return fsPromises.readFile(filePath, "utf-8");
-}
-
 export async function ensureDirectory(filePath: string): Promise<void> {
 	const dir = path.dirname(filePath);
 	if (!fs.existsSync(dir)) {

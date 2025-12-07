@@ -5,7 +5,7 @@ import { stdin as input, stdout as output } from "node:process";
 import { createInterface } from "node:readline/promises";
 import { getOutputDir } from "../env";
 import { getDefaultDay, getDefaultYear } from "../utils/cli-helpers";
-import { scaffoldCommand } from "./scaffold";
+import { setupCommand } from "./setup";
 
 async function prompt(question: string, def?: string): Promise<string> {
 	const rl = createInterface({ input, output });
@@ -69,6 +69,6 @@ export async function initCommand(): Promise<void> {
 
 	if (scaffoldToday) {
 		const day = getDefaultDay();
-		await scaffoldCommand(year, day, false, outputDir);
+		await setupCommand(year, day, false, outputDir);
 	}
 }

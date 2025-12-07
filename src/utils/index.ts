@@ -4,8 +4,6 @@ import { Eta } from "eta";
 import { getOutputDir } from "../env";
 import { writeFile } from "./runtime";
 
-export * from "./cli-helpers";
-
 export function loadFile(filePath: string) {
 	return fs.readFileSync(filePath).toString();
 }

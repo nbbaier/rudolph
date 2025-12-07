@@ -1,5 +1,5 @@
 import { loadGuesses } from "../utils/guesses";
-import { readCommand } from "./read";
+import { puzzleCommand } from "./puzzle";
 
 export async function refreshCommand(
 	year: string,
@@ -22,5 +22,5 @@ export async function refreshCommand(
 		}
 	}
 	console.log(`Refreshing puzzle for: ${year} day ${day}`);
-	await readCommand(year, day, true, outputDir);
+	await puzzleCommand(year, day, true, outputDir, false);
 }
