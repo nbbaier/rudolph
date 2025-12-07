@@ -119,7 +119,7 @@ type ScaffoldContext = {
 };
 
 export async function scaffoldProject(ctx: ScaffoldContext) {
-	const projectDir = path.resolve(ctx.cwd, ctx.projectName);
+	const projectDir = ctx.cwd;
 
 	const rudolphVersion = await getVersion(ctx.packageManager, "rudolph");
 	const packageJson = generatePackageJson(ctx.projectName, rudolphVersion);

@@ -71,7 +71,7 @@ export async function getContext(argv: string[]): Promise<Context> {
 		yes,
 		install: install ?? (noInstall ? false : undefined),
 		git: git ?? (noGit ? false : undefined),
-		cwd: cwd ?? "",
+		cwd: process.cwd(),
 		exit(code) {
 			process.exit(code);
 		},

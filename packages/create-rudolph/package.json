@@ -24,7 +24,7 @@
 	"scripts": {
 		"build": "tsdown",
 		"dev": "bun src/index.ts",
-		"test": "echo 'No tests yet'",
+		"test": "bun test",
 		"prepublishOnly": "npm run build",
 		"typecheck": "tsc --noEmit"
 	},
