@@ -1,23 +1,21 @@
 # rudolph
 
-A powerful CLI tool for Advent of Code enthusiasts. Set up, run, submit, and track your AoC solutions with ease.
-
-> **Note**: This is an early release. Use the `@next` tag to install the latest pre-release version.
+A powerful CLI tool for Advent of Code enthusiasts. Set up, run, submit, and track your AoC solutions with ease. Install the latest release—no `@next` tag needed.
 
 ## Installation
 
 ```bash
 # With bun (recommended)
-bun install -g @nbbaier/rudolph@next
+bun install -g @nbbaier/rudolph
 
 # With npm
-npm install -g @nbbaier/rudolph@next
+npm install -g @nbbaier/rudolph
 
 # With pnpm
-pnpm add -g @nbbaier/rudolph@next
+pnpm add -g @nbbaier/rudolph
 
 # With yarn
-yarn global add @nbbaier/rudolph@next
+yarn global add @nbbaier/rudolph
 ```
 
 ## Quick Start
@@ -39,7 +37,7 @@ rudolph answer 2024 1 1
 For a guided setup experience, use **[create-rudolph](../create-rudolph)** instead:
 
 ```bash
-bunx @nbbaier/create-rudolph@next advent-of-code
+bunx @nbbaier/create-rudolph advent-of-code
 cd advent-of-code
 rudolph setup
 ```

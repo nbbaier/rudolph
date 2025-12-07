@@ -1,8 +1,6 @@
 # create-rudolph
 
-The easiest way to start your Advent of Code journey. Scaffolds a new workspace with the [`rudolph`](../rudolph) CLI pre-configured.
-
-> **Note**: This is an early release. Use the `@next` tag to install the latest pre-release version.
+The easiest way to start your Advent of Code journey. Scaffolds a new workspace with the [`rudolph`](https://github.com/nbbaier/rudolph/tree/main/packages/rudolph) CLI pre-configured. Install from the latest release—no `@next` tag required.
 
 ## Usage
 
@@ -10,20 +8,20 @@ Run the interactive setup wizard:
 
 ```bash
 # Using bun (recommended)
-bun create @nbbaier/rudolph@next # defaults to advent-of-code
-bun create @nbbaier/rudolph@next my-aoc-project # creates a new project called my-aoc-project
+bun create @nbbaier/rudolph # defaults to advent-of-code
+bun create @nbbaier/rudolph my-aoc-project # creates a new project called my-aoc-project
 
 # Using npm
-npm create @nbbaier/rudolph@next
-npm create @nbbaier/rudolph@next my-aoc-project
+npm create @nbbaier/rudolph
+npm create @nbbaier/rudolph my-aoc-project
 
 # Using pnpm
-pnpm create @nbbaier/rudolph@next
-pnpm create @nbbaier/rudolph@next my-aoc-project
+pnpm create @nbbaier/rudolph
+pnpm create @nbbaier/rudolph my-aoc-project
 
 # Using yarn
-yarn create @nbbaier/rudolph@next
-yarn create @nbbaier/rudolph@next my-aoc-project
+yarn create @nbbaier/rudolph
+yarn create @nbbaier/rudolph my-aoc-project
 
 ```
 

@@ -1,6 +1,6 @@
 {
 	"name": "@nbbaier/rudolph",
-	"version": "0.1.0",
+	"version": "0.1.2",
 	"description": "Advent of Code CLI - scaffold, run, and manage AoC solutions (Early Release)",
 	"type": "module",
 	"author": "nbbaier",
