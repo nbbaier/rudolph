@@ -1,43 +1,46 @@
+import { confirm, isCancel, password } from "@clack/prompts";
 import type { Context } from "../context";
-import { error, info, title } from "../messages";
+import { info } from "../messages";
 
 export async function getSession(
-	ctx: Pick<
-		Context,
-		"aocSession" | "prompt" | "exit" | "aocSession" | "yes" | "dryRun"
-	>,
+	ctx: Pick<Context, "aocSession" | "exit" | "yes" | "dryRun">,
 ) {
 	if (ctx.yes) {
-		ctx.aocSession = "FILL ME IN!";
-		await error("session", ctx.aocSession);
+		ctx.aocSession = "FILL_ME_IN";
+		await info(
+			"session",
+			"Set to FILL_ME_IN in .env; update it with your AoC session cookie before fetching inputs.",
+		);
 		return;
 	}
-	const { session } = await ctx.prompt({
-		name: "session",
-		type: "text",
-		label: title("token"),
-		message: "What is your advent of code session token?",
-		initial: "",
-		mask: true,
-		validate(value: string) {
-			if (!value) {
-				return "Session token is required";
-			}
-			return true;
-		},
+
+	const wantsSession = await confirm({
+		message:
+			"Download puzzle inputs automatically? (requires your AoC session cookie, stored locally in .env)",
+		initialValue: true,
 	});
 
-	ctx.aocSession = session?.trim() ?? "";
-	if (ctx.dryRun) {
-		await info("--dry-run", "Skipping year selection");
-		return;
-	}
-
-	const { aocSession } = ctx;
-
-	if (!aocSession) {
+	if (isCancel(wantsSession)) {
 		ctx.exit(1);
 	}
 
-	ctx.aocSession = aocSession;
+	if (!wantsSession) {
+		await info("Skipped", "You can add your session cookie to .env later.");
+		return;
+	}
+
+	const session = await password({
+		message:
+			"Paste your 'session' cookie from adventofcode.com (found in browser dev tools):",
+	});
+
+	if (isCancel(session)) {
+		ctx.exit(1);
+	}
+
+	ctx.aocSession = typeof session === "string" ? session.trim() : "";
+
+	if (ctx.dryRun) {
+		await info("--dry-run", "Skipping session storage");
+	}
 }

@@ -1,48 +1,56 @@
+import { confirm, isCancel, text } from "@clack/prompts";
 import type { Context } from "../context";
-import { info, title } from "../messages";
+import { getGitEmail } from "../git-utils";
+import { info } from "../messages";
 
 export async function getEmail(
-	ctx: Pick<Context, "aocUserAgent" | "prompt" | "exit" | "yes" | "dryRun">,
+	ctx: Pick<Context, "aocUserAgent" | "exit" | "yes" | "dryRun">,
 ) {
 	if (ctx.yes) {
-		ctx.aocUserAgent = "FILL OUT MANUALLY";
-		await info("email", ctx.aocUserAgent);
+		ctx.aocUserAgent = "FILL_ME_IN";
+		await info(
+			"email",
+			"Set to FILL_ME_IN in .env; update it if you'd like to include a contact in the User-Agent.",
+		);
 		return;
 	}
-	let _ua: boolean | undefined;
+	let _ua: boolean | symbol = false;
 
 	if (ctx.aocUserAgent === undefined) {
-		({ userAgent: _ua } = await ctx.prompt({
-			name: "userAgent",
-			type: "confirm",
-			label: title("email"),
-			message: `Add your email as the user agent?`,
-			hint: "optional",
-			initial: true,
-		}));
+		_ua = await confirm({
+			message:
+				"Include an email in the User-Agent? (AoC recommends a contact for API usage; optional but polite)",
+			initialValue: true,
+		});
+
+		if (isCancel(_ua)) {
+			ctx.exit(1);
+		}
 	}
 
 	if (!_ua) {
 		await info(
-			ctx.yes === false ? "git [skip]" : "Sounds good!",
-			`You can always add it manually later.`,
+			"Skipped",
+			"You can add an email to .env (AOC_USER_AGENT) later.",
 		);
 		return;
 	}
 
-	const { email } = await ctx.prompt({
-		name: "email",
-		type: "text",
-		label: title("email"),
-		message: "What is your email address?",
-		placeholder: "example@example.com",
-		initial: "",
-		finalize: (value: string) => {
-			return value?.trim() || "example@example.com";
-		},
+	// Try to get git email to pre-populate
+	const gitEmail = await getGitEmail();
+
+	const email = await text({
+		message: "Email for User-Agent (any contact you're comfortable with):",
+		placeholder: "your.email@example.com",
+		initialValue: gitEmail || "",
 	});
 
-	ctx.aocUserAgent = email?.trim() ?? "";
+	if (isCancel(email)) {
+		ctx.exit(1);
+	}
+
+	ctx.aocUserAgent =
+		typeof email === "string" ? email.trim() : "example@example.com";
 	if (ctx.dryRun) {
 		await info("--dry-run", "Skipping user agent");
 		return;

@@ -1,6 +1,7 @@
-import type { Context } from "node:vm";
+import { getFriendlyName } from "../git-utils";
 import { banner } from "../messages";
 
-export async function intro(_ctx: Pick<Context, "help">) {
-	banner();
+export async function intro() {
+	const name = await getFriendlyName();
+	banner(name);
 }

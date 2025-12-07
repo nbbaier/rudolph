@@ -1,12 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
-import { color } from "@astrojs/cli-kit";
+import { confirm, isCancel } from "@clack/prompts";
 import type { Context } from "../context";
-import { error, info, title } from "../messages";
-import { shell } from "../shell";
+import { exec } from "../exec";
+import { error, info } from "../messages";
+import { color } from "../utils";
 
 export async function git(
-	ctx: Pick<Context, "cwd" | "git" | "yes" | "prompt" | "dryRun" | "tasks">,
+	ctx: Pick<Context, "cwd" | "git" | "yes" | "dryRun" | "tasks">,
 ) {
 	if (fs.existsSync(path.join(ctx.cwd, ".git"))) {
 		await info("Nice!", `Git has already been initialized`);
@@ -18,17 +19,17 @@ export async function git(
 		await info("git", "true");
 	}
 
-	let _git = ctx.git ?? ctx.yes;
+	let _git: boolean | symbol = ctx.git ?? ctx.yes ?? false;
 
-	if (_git === undefined) {
-		({ git: _git } = await ctx.prompt({
-			name: "git",
-			type: "confirm",
-			label: title("git"),
-			message: `Initialize a new git repository?`,
-			hint: "optional",
-			initial: true,
-		}));
+	if (_git === false) {
+		_git = await confirm({
+			message: "Initialize a git repository and make an initial commit?",
+			initialValue: true,
+		});
+
+		if (isCancel(_git)) {
+			_git = false;
+		}
 	}
 
 	if (ctx.dryRun) {
@@ -38,33 +39,23 @@ export async function git(
 			pending: "Git",
 			start: "Git initializing...",
 			end: "Git initialized",
-			while: () =>
-				init({ cwd: ctx.cwd }).catch((e) => {
-					error("error", e);
-					process.exit(1);
-				}),
+			while: () => init({ cwd: ctx.cwd }),
+			onError: (e) => {
+				error("error", String(e));
+			},
 		});
 	} else {
 		await info(
-			ctx.yes === false ? "git [skip]" : "Sounds good!",
-			`You can always run ${color.reset("git init")}${color.dim(" manually.")}`,
+			"Skipped",
+			`You can run ${color.reset("git init")} later if you'd like`,
 		);
 	}
 }
 
 async function init({ cwd }: { cwd: string }) {
-	try {
-		await shell("git", ["init"], { cwd, stdio: "ignore" });
-		await shell("git", ["add", "-A"], { cwd, stdio: "ignore" });
-		await shell(
-			"git",
-			[
-				"commit",
-				"-m",
-				'"Initial commit from Astro"',
-				'--author="houston[bot] <astrobot-houston@users.noreply.github.com>"',
-			],
-			{ cwd, stdio: "ignore" },
-		);
-	} catch {}
+	await exec("git", ["init"], { cwd });
+	await exec("git", ["add", "-A"], { cwd });
+	await exec("git", ["commit", "-m", "Initial commit from create-rudolph"], {
+		cwd,
+	});
 }

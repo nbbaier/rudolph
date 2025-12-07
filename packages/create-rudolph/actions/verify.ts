@@ -2,9 +2,7 @@ import dns from "node:dns/promises";
 import type { Context } from "../context";
 import { bannerAbort, error, log } from "../messages";
 
-export async function verify(
-	ctx: Pick<Context, "version" | "dryRun" | "template" | "ref" | "exit">,
-) {
+export async function verify(ctx: Pick<Context, "dryRun" | "exit">) {
 	if (!ctx.dryRun) {
 		const online = await isOnline();
 		if (!online) {

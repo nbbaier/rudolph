@@ -1,14 +1,9 @@
-import { exec } from "node:child_process";
-import { stripVTControlCharacters } from "node:util";
-import { color, label } from "@astrojs/cli-kit";
-import { align, sleep } from "@astrojs/cli-kit/utils";
-import { shell } from "./shell";
+import { exec } from "./exec";
+import { color, getRandomFestiveMessage, label, sleep } from "./utils";
 
 const stdout = process.stdout;
 
 export const log = (message: string) => stdout.write(`${message}\n`);
-
-export const title = (text: string) => `${align(label(text), "end", 7)} `;
 
 export const info = async (prefix: string, text: string) => {
 	await sleep(100);
@@ -22,24 +17,10 @@ export const info = async (prefix: string, text: string) => {
 	}
 };
 
-export const getName = () =>
-	new Promise<string>((resolve) => {
-		exec("git config user.name", { encoding: "utf-8" }, (_1, gitName) => {
-			if (gitName?.trim()) {
-				return resolve(gitName?.split(" ")[0]?.trim() ?? "");
-			}
-			exec("whoami", { encoding: "utf-8" }, (_3, whoami) => {
-				if (whoami?.trim()) {
-					return resolve(whoami?.split(" ")[0]?.trim() ?? "");
-				}
-				return resolve("astronaut");
-			});
-		});
-	});
-
-export const banner = () => {
+export const banner = (name?: string) => {
+	const greeting = name ? `Hey ${name}! Let's` : "Let's";
 	log(
-		`${label("rudolph", color.bgRed, color.whiteBright)}  🎄 Let's set up your Advent of Code workshop`,
+		`${label("rudolph", color.bgRed, color.whiteBright)}  🎄 ${greeting} set up your Advent of Code workshop`,
 	);
 };
 
@@ -61,44 +42,43 @@ export const bannerAbort = () =>
 
 export const nextSteps = async ({
 	projectDir,
-	devCmd,
+	pmPrefix,
 }: {
 	projectDir: string;
-	devCmd: string;
+	pmPrefix: string;
 }) => {
-	const max = stdout.columns;
-	const prefix = max < 80 ? " " : " ".repeat(9);
+	const prefix = " ".repeat(3);
 	await sleep(200);
 	log(
 		`\n ${color.bgCyan(` ${color.black("next")} `)}  ${color.bold(
-			"Liftoff confirmed. Explore your project!",
+			"Your Advent of Code workspace is ready!",
 		)}`,
 	);
 
 	await sleep(100);
-	if (projectDir !== "") {
-		projectDir = projectDir.includes(" ")
+	if (projectDir && projectDir !== ".") {
+		const dirPath = projectDir.includes(" ")
 			? `"./${projectDir}"`
 			: `./${projectDir}`;
-		const enter = [
-			`\n${prefix}Enter your project directory using`,
-			color.cyan(`cd ${projectDir}`, ""),
-		];
-		const len =
-			(enter[0]?.length ?? 0) + stripVTControlCharacters(enter[1] ?? "").length;
-		log(enter.join(len > max ? `\n${prefix}` : enter[1] ? ` ${prefix}` : ""));
+		log(`\n${prefix}Enter your project directory:`);
+		log(`${prefix}${color.cyan(`cd ${dirPath}`)}`);
 	}
-	log(
-		`${prefix}Run ${color.cyan(devCmd)} to start the dev server. ${color.cyan("CTRL+C")} to stop.`,
-	);
+
 	await sleep(100);
-	log(
-		`${prefix}Add frameworks like ${color.cyan(`react`)} or ${color.cyan(
-			"tailwind",
-		)} using ${color.cyan("astro add")}.`,
-	);
+	log(`\n${prefix}Setup a day (defaults to today):`);
+	log(`${prefix}${color.cyan(`${pmPrefix} setup`)}`);
+
 	await sleep(100);
-	log(`\n${prefix}Stuck? Join us at ${color.cyan(`https://astro.build/chat`)}`);
+	log(`\n${prefix}Run your solutions:`);
+	log(
+		`${prefix}${color.cyan(`${pmPrefix} run:input`)}   ${color.dim("# Run on real input")}`,
+	);
+	log(
+		`${prefix}${color.cyan(`${pmPrefix} run:sample`)}  ${color.dim("# Run on sample input")}`,
+	);
+
+	await sleep(100);
+	log(`\n${prefix}${color.cyan(getRandomFestiveMessage())}`);
 	await sleep(200);
 };
 
@@ -107,13 +87,8 @@ async function getRegistry(packageManager: string): Promise<string> {
 	if (_registry) return _registry;
 	const fallback = "https://registry.npmjs.org";
 	try {
-		const { stdout } = await shell(packageManager, [
-			"config",
-			"get",
-			"registry",
-		]);
+		const stdout = await exec(packageManager, ["config", "get", "registry"]);
 		_registry = stdout?.trim()?.replace(/\/$/, "") || fallback;
-		// Detect cases where the shell command returned a non-URL (e.g. a warning)
 		if (!new URL(_registry).host) _registry = fallback;
 	} catch {
 		_registry = fallback;
