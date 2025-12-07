@@ -14,6 +14,7 @@ export async function solutions(
 		| "solutionsDir"
 		| "dryRun"
 		| "projectName"
+		| "cwd"
 	>,
 ) {
 	if (ctx.yes && ctx.projectName) {
@@ -26,12 +27,16 @@ export async function solutions(
 		return;
 	}
 
+	const projectRoot = ctx.cwd || ctx.projectName || ".";
+
 	const name = await text({
 		message: "Folder for your daily solutions (inside the project):",
 		placeholder: "solutions",
 		initialValue: "solutions",
 		validate(value: string) {
-			if (!isEmpty(value)) {
+			if (!value) return "Please enter a folder name.";
+			const candidate = path.resolve(projectRoot, value);
+			if (!isEmpty(candidate)) {
 				return `Directory is not empty!`;
 			}
 			if (value.match(/[^\x20-\x7E]/g) !== null)
