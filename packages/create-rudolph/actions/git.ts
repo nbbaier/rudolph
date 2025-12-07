@@ -23,7 +23,7 @@ export async function git(
 
 	if (_git === undefined || _git === false) {
 		_git = await confirm({
-			message: `${title("git")}Initialize a new git repository?`,
+			message: `${title("git")}Initialize git repository?`,
 			initialValue: true,
 		});
 
@@ -47,8 +47,8 @@ export async function git(
 		});
 	} else {
 		await info(
-			ctx.yes === false ? "git [skip]" : "Sounds good!",
-			`You can always run ${color.reset("git init")}${color.dim(" manually.")}`,
+			"Skipped",
+			`You can run ${color.reset("git init")} later if you'd like`,
 		);
 	}
 }
@@ -59,12 +59,7 @@ async function init({ cwd }: { cwd: string }) {
 		await shell("git", ["add", "-A"], { cwd, stdio: "ignore" });
 		await shell(
 			"git",
-			[
-				"commit",
-				"-m",
-				'"Initial commit from Astro"',
-				'--author="houston[bot] <astrobot-houston@users.noreply.github.com>"',
-			],
+			["commit", "-m", "Initial commit from create-rudolph"],
 			{ cwd, stdio: "ignore" },
 		);
 	} catch {}

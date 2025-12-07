@@ -13,7 +13,7 @@ export async function firstDay(
 	let _firstDay: boolean | symbol = ctx.firstDay ?? ctx.yes ?? false;
 	if (_firstDay === undefined || _firstDay === false) {
 		_firstDay = await confirm({
-			message: `${title("day")}Do you want to setup the first day?`,
+			message: `${title("day")}Set up Day 1 to get started?`,
 			initialValue: true,
 		});
 
@@ -24,8 +24,8 @@ export async function firstDay(
 
 	if (!_firstDay) {
 		await info(
-			ctx.yes === false ? "firstDay [skip]" : "Sounds good!",
-			`You can always set it up manually later.`,
+			"Skipped",
+			`Run 'rudolph setup' whenever you're ready to start`,
 		);
 		return;
 	}

@@ -15,7 +15,7 @@ export async function dependencies(
 	let deps: boolean | symbol = ctx.install ?? ctx.yes ?? false;
 	if (deps === undefined || deps === false) {
 		deps = await confirm({
-			message: `${title("deps")}Install dependencies?`,
+			message: `${title("deps")}Install dependencies now?`,
 			initialValue: true,
 		});
 
@@ -47,8 +47,8 @@ export async function dependencies(
 		});
 	} else {
 		await info(
-			ctx.yes === false ? "deps [skip]" : "No problem!",
-			"Remember to install dependencies after setup.",
+			"Skipped",
+			`Run ${ctx.packageManager} install when you're ready`,
 		);
 	}
 }

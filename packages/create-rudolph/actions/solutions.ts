@@ -27,8 +27,8 @@ export async function solutions(
 	}
 
 	const name = await text({
-		message: `${title("dir")}What should we name the solutions directory?`,
-		initialValue: `./${ctx.projectName}/solutions`,
+		message: `${title("dir")}Where should your daily solutions live?`,
+		initialValue: "solutions",
 		validate(value: string) {
 			if (!isEmpty(value)) {
 				return `Directory is not empty!`;
@@ -47,28 +47,11 @@ export async function solutions(
 		ctx.exit(1);
 	}
 
-	ctx.solutionsDir = (name as string)?.trim() ?? "";
+	ctx.solutionsDir = (name as string)?.trim() ?? "solutions";
 	ctx.solutionsPath = path.resolve(projectName, ctx.solutionsDir);
+
 	if (ctx.dryRun) {
 		await info("--dry-run", "Skipping solutions directory creation");
 		return;
-	} else {
-		let solutionsPath = ctx.solutionsPath;
-		if (solutionsPath?.trim() === "." || solutionsPath?.trim() === "./") {
-			const parts = process.cwd().split(path.sep);
-			solutionsPath = parts[parts.length - 1] ?? "";
-		} else if (
-			solutionsPath?.startsWith("./") ||
-			solutionsPath?.startsWith("../")
-		) {
-			const parts = solutionsPath.split("/");
-			solutionsPath = parts[parts.length - 1] ?? "";
-		}
-		ctx.solutionsPath = toValidName(solutionsPath ?? "");
-	}
-
-	const { solutionsPath } = ctx;
-	if (!solutionsPath) {
-		ctx.exit(1);
 	}
 }

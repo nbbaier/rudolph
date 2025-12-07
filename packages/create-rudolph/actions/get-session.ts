@@ -11,10 +11,10 @@ export async function getSession(
 		return;
 	}
 	const session = await password({
-		message: `${title("token")}What is your advent of code session token?`,
+		message: `${title("token")}What's your session cookie from adventofcode.com?`,
 		validate(value: string) {
 			if (!value) {
-				return "Session token is required";
+				return "Session token is required to fetch puzzle inputs";
 			}
 		},
 	});

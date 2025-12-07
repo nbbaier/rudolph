@@ -26,7 +26,7 @@ export async function projectName(
 		}
 
 		const name = await text({
-			message: `${title("dir")}Where should we create your new project?`,
+			message: `${title("dir")}Where should we create your project?`,
 			initialValue: "advent-of-code",
 			validate(value: string) {
 				if (!isEmpty(value)) {

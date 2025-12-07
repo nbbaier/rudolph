@@ -15,7 +15,7 @@ export async function getEmail(
 
 	if (ctx.aocUserAgent === undefined) {
 		_ua = await confirm({
-			message: `${title("email")}Add your email as the user agent?`,
+			message: `${title("email")}Include your email for the AOC API? (polite and helpful!)`,
 			initialValue: true,
 		});
 
@@ -26,8 +26,8 @@ export async function getEmail(
 
 	if (!_ua) {
 		await info(
-			ctx.yes === false ? "git [skip]" : "Sounds good!",
-			`You can always add it manually later.`,
+			"Skipped",
+			`You can always add it to .env manually later`,
 		);
 		return;
 	}
@@ -36,8 +36,8 @@ export async function getEmail(
 	const gitEmail = await getGitEmail();
 
 	const email = await text({
-		message: `${title("email")}What is your email address?`,
-		placeholder: "example@example.com",
+		message: `${title("email")}What's your email?`,
+		placeholder: "your.email@example.com",
 		initialValue: gitEmail || "",
 	});
 

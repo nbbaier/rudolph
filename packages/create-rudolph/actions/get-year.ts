@@ -11,7 +11,7 @@ export async function getYear(
 		return;
 	}
 	const year = await text({
-		message: `${title("year")}What year is this for?`,
+		message: `${title("year")}Which year are you tackling?`,
 		initialValue: new Date().getFullYear().toString(),
 		placeholder: new Date().getFullYear().toString(),
 	});
