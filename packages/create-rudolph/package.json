@@ -3,23 +3,15 @@
 	"version": "1.0.0",
 	"description": "Scaffold a new Advent of Code workspace with rudolph CLI",
 	"type": "module",
-	"module": "index.ts",
+	"module": "src/index.ts",
 	"bin": {
-		"create-rudolph": "./index.ts"
+		"create-rudolph": "./src/index.ts"
 	},
 	"files": [
-		"index.ts",
-		"actions",
-		"context.ts",
-		"exec.ts",
-		"git-utils.ts",
-		"messages.ts",
-		"shared.ts",
-		"tasks.ts",
-		"utils.ts"
+		"src"
 	],
 	"scripts": {
-		"dev": "bun index.ts",
+		"dev": "bun src/index.ts",
 		"test": "echo 'No tests yet'",
 		"typecheck": "tsc --noEmit"
 	},

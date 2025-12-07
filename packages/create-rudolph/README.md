@@ -13,7 +13,7 @@ bun create rudolph my-aoc-project # creates a new project called my-aoc-project
 
 # Using npm
 npm create rudolph
-npx create rudolph my-aoc-project
+npm create rudolph my-aoc-project
 
 # Using pnpm
 pnpm create rudolph
