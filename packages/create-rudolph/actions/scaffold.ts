@@ -3,9 +3,6 @@ import path from "node:path";
 import type { Context } from "../context";
 import { getVersion } from "../messages";
 import { toValidName } from "../shared";
-import { shell } from "../shell";
-
-const fsp = fs.promises;
 
 export async function scaffold(
 	ctx: Pick<
@@ -70,7 +67,8 @@ function generatePackageJson(name: string, version: string) {
 		version: "0.1.0",
 		scripts: {
 			setup: "rudolph setup",
-			run: "rudolph run input",
+			"run:input": "rudolph run input",
+			"run:sample": "rudolph run sample",
 		},
 		dependencies: {
 			rudolph: `^${version}`,
@@ -91,8 +89,8 @@ My solutions for Advent of Code ${year}.
 ## Usage
 
 - \`${pm} run setup\` to prepare a day (defaults to today)
-- \`rudolph run sample\` to run solutions on the sample input
-- \`rudolph run input\` to run solutions on the real input
+- \`${pm} run run:sample\` to run solutions on the sample input
+- \`${pm} run run:input\` to run solutions on the real input
 `;
 }
 
@@ -100,13 +98,13 @@ async function ensureGitignore(cwd: string, entries: string[]): Promise<void> {
 	const gitignorePath = path.join(cwd, ".gitignore");
 	let content = "";
 	if (fs.existsSync(gitignorePath)) {
-		content = await fsp.readFile(gitignorePath, "utf-8");
+		content = await fs.promises.readFile(gitignorePath, "utf-8");
 	}
 	const lines = content.split("\n").filter(Boolean);
 	const toAdd = entries.filter((entry) => !lines.includes(entry));
 	if (toAdd.length > 0) {
 		const combined = `${content.trimEnd()}\n${toAdd.join("\n")}\n`;
-		await fsp.writeFile(gitignorePath, combined);
+		await fs.promises.writeFile(gitignorePath, combined);
 	}
 }
 
@@ -139,15 +137,16 @@ export async function scaffoldProject(ctx: ScaffoldContext) {
 		ctx.packageManager,
 	);
 
-	await shell("mkdir", ["-p", projectDir]);
-	await shell("mkdir", ["-p", path.join(projectDir, ctx.solutionsDir)]);
-	await shell("touch", [path.resolve(projectDir, "package.json")]);
-	await shell("touch", [path.resolve(projectDir, ".env")]);
-	await shell("touch", [path.resolve(projectDir, "README.md")]);
+	await fs.promises.mkdir(path.join(projectDir, ctx.solutionsDir), {
+		recursive: true,
+	});
 
-	await fsp.writeFile(path.resolve(projectDir, "package.json"), packageJson);
-	await fsp.writeFile(path.resolve(projectDir, ".env"), envFile);
-	await fsp.writeFile(path.resolve(projectDir, "README.md"), readme);
+	await fs.promises.writeFile(
+		path.resolve(projectDir, "package.json"),
+		packageJson,
+	);
+	await fs.promises.writeFile(path.resolve(projectDir, ".env"), envFile);
+	await fs.promises.writeFile(path.resolve(projectDir, "README.md"), readme);
 
 	await ensureGitignore(projectDir, [
 		"node_modules",
