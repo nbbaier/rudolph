@@ -5,7 +5,7 @@ A powerful CLI tool for Advent of Code enthusiasts. Set up, run, submit, and tra
 ## Installation
 
 ```bash
-# With bun (recommended for best performance)
+# With bun (recommended)
 bun install -g rudolph
 
 # With npm
@@ -18,52 +18,105 @@ pnpm add -g rudolph
 yarn global add rudolph
 ```
 
-## Quick Start
+## Configuration
 
-The easiest way to get started is with [create-rudolph](https://www.npmjs.com/package/create-rudolph):
+Rudolph uses a `.env` file for configuration. It looks for this file in your current directory and parent directories.
 
-```bash
-bunx create-rudolph my-aoc-workspace
-cd my-aoc-workspace
-rudolph setup
+```env
+AOC_SESSION=your-session-cookie
+AOC_YEAR=2024
+AOC_USER_AGENT=you@example.com
+OUTPUT_DIR=./aoc
 ```
 
-Or manually in an existing project:
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `AOC_SESSION` | Your AoC session cookie (required for fetching/submitting) | - |
+| `AOC_YEAR` | Default year for commands | Current year (or previous if < Dec) |
+| `AOC_USER_AGENT` | Email for User-Agent header (polite for AoC) | - |
+| `OUTPUT_DIR` | Directory where solutions are generated | `./aoc` |
 
-```bash
-echo "AOC_SESSION=your-session-cookie" > .env
-rudolph setup
-```
+### Getting Your Session Cookie
 
-## Features
-
-- 🎄 **Setup scaffolding** - Generate solution templates and folder structure
-- 📥 **Auto-fetch puzzles** - Download puzzle descriptions and input data
-- ⚡ **Run solutions** - Execute solutions with timing against sample or actual input
-- 🚀 **Submit answers** - Submit directly to AoC with intelligent guardrails
-- 📊 **Track progress** - View stars and guess history
-- 🔄 **Smart caching** - Cache puzzles and inputs locally
-- 🛡️ **Error handling** - Prevent duplicate submissions and handle rate limits
-
-## Documentation
-
-For full documentation, see the [main README](https://github.com/nbbaier/rudolph#readme).
+1. Log in to [adventofcode.com](https://adventofcode.com)
+2. Open browser dev tools → Application (or Storage) → Cookies
+3. Copy the value of the `session` cookie
 
 ## Commands
 
-- `rudolph setup [year] [day]` - Create day folder and fetch puzzle data
-- `rudolph run <target>` - Run solution against sample or input
-- `rudolph answer <year> <day> <part>` - Submit answer to AoC
-- `rudolph input [year] [day]` - Download puzzle input
-- `rudolph puzzle [year] [day]` - Download puzzle description
-- `rudolph refresh [year] [day]` - Re-fetch puzzle for part 2
-- `rudolph guesses [year] [day]` - View guess history
-- `rudolph stars` - Show stars for the year
+### Setup & Fetching
+
+Initialize a new day or fetch specific data.
+
+- **`rudolph setup`**: Create solution files, download input, and fetch puzzle.
+  - `-y, --year <year>`: Year (default: `AOC_YEAR` or current)
+  - `-d, --day <day>`: Day (default: today)
+  - `-f, --force`: Overwrite existing files
+  - `-o, --output-dir <dir>`: Custom output directory
+
+- **`rudolph input`**: Download puzzle input (`input.txt`).
+  - `-y, --year <year>`
+  - `-d, --day <day>`
+  - `-f, --force`: Re-download even if exists
+
+- **`rudolph puzzle`**: Download puzzle description (`puzzle.md`).
+  - `-y, --year <year>`
+  - `-d, --day <day>`
+  - `-f, --force`
+  - `--no-print`: Don't print to console
+
+- **`rudolph refresh`**: Re-fetch puzzle (useful for getting Part 2 description).
+  - `-y, --year <year>`
+  - `-d, --day <day>`
+  - `-f, --force`: Force refresh even if Part 1 isn't complete locally
+
+### Running Solutions
+
+- **`rudolph run <target>`**: Run your solution with timing.
+  - `<target>`: `sample` or `input`
+  - `-y, --year <year>`
+  - `-d, --day <day>`
+  - `-p, --part <part>`: `1`, `2`, or `both` (default: `both`)
+
+### Submitting & Tracking
+
+- **`rudolph answer <year> <day> <part>`**: Run solution and submit answer to AoC.
+  - `<year>`: Year (e.g., 2024)
+  - `<day>`: Day number
+  - `<part>`: `1` or `2`
+  - `--no-refresh`: Skip auto-refreshing puzzle after correct Part 1
+
+- **`rudolph guesses`**: Show guess history for a specific day.
+  - `-y, --year <year>`
+  - `-d, --day <day>`
+  - `--json`: Output as JSON
+
+- **`rudolph stars`**: Show collected stars for a year.
+  - `-y, --year <year>`
+  - `--json`: Output as JSON
+
+## Solution Format
+
+Generated `index.ts` files follow this structure:
+
+```typescript
+// input is the raw content of input.txt or sample.txt
+export default {
+  p1: (input: string) => {
+    // Solve Part 1
+    return 0; // Return number or string
+  },
+  p2: (input: string) => {
+    // Solve Part 2
+    return 0;
+  },
+};
+```
 
 ## Requirements
 
-- **Bun >= 1.3.3** (recommended) or **Node.js >= 18**
-- For Node.js: `tsx` must be installed globally or in your project
+- **Runtime**: Bun (recommended) or Node.js 18+ (requires `tsx` for TypeScript execution).
+- **AoC Session**: You must provide your session cookie in `.env` to fetch inputs and submit answers.
 
 ## License
 
