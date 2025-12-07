@@ -1,0 +1,46 @@
+{
+	"name": "create-rudolph",
+	"version": "1.0.0",
+	"description": "Scaffold a new Advent of Code workspace with rudolph CLI",
+	"type": "module",
+	"module": "index.ts",
+	"bin": {
+		"create-rudolph": "./index.ts"
+	},
+	"files": [
+		"index.ts",
+		"actions",
+		"context.ts",
+		"data",
+		"messages.ts",
+		"shared.ts",
+		"shell.ts"
+	],
+	"scripts": {
+		"dev": "bun index.ts",
+		"test": "echo 'No tests yet'",
+		"typecheck": "tsc --noEmit"
+	},
+	"keywords": [
+		"advent-of-code",
+		"aoc",
+		"cli",
+		"scaffold",
+		"create"
+	],
+	"license": "MIT",
+	"dependencies": {
+		"@astrojs/cli-kit": "^0.4.1",
+		"arg": "^5.0.2"
+	},
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"engines": {
+		"bun": ">=1.3.3",
+		"node": ">=18"
+	}
+}
