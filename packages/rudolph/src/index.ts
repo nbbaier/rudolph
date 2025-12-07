@@ -2,7 +2,6 @@ import { createRequire } from "node:module";
 import { Command } from "commander";
 import { answerCommand } from "./commands/answer";
 import { guessesCommand } from "./commands/guesses";
-import { type InitCommandOptions, initCommand } from "./commands/init";
 import { inputCommand } from "./commands/input";
 import { puzzleCommand } from "./commands/puzzle";
 import { refreshCommand } from "./commands/refresh";
@@ -57,23 +56,6 @@ withDayYearOptions(
 	const year = yearSchema.parse(options.year);
 	await inputCommand(year, day, options.force || false, options.outputDir);
 });
-
-program
-	.command("init")
-	.description("Interactive setup for a new AoC workspace")
-	.argument("[directory]", "Project directory")
-	.option("-y, --yes", "Accept defaults without prompts")
-	.option("--install", "Install dependencies after scaffolding")
-	.option("--skip-install", "Skip installing dependencies")
-	.option("--git", "Initialize git repository")
-	.option("--skip-git", "Skip git initialization")
-	.option("--first-day", "Setup today's puzzle after scaffolding")
-	.option("--skip-first-day", "Skip setting up today's puzzle")
-	.action(
-		async (directory: string | undefined, options: InitCommandOptions) => {
-			await initCommand(directory, options, version);
-		},
-	);
 
 program
 	.command("run")
