@@ -1,7 +1,7 @@
 import path from "node:path";
 import { isCancel, text } from "@clack/prompts";
 import type { Context } from "../context";
-import { info, log, title } from "../messages";
+import { info, log } from "../messages";
 import { isEmpty, toValidName } from "../shared";
 import { color } from "../utils";
 
@@ -21,12 +21,13 @@ export async function projectName(
 		if (ctx.yes) {
 			ctx.projectName = "advent-of-code";
 			ctx.cwd = path.resolve(`./${ctx.projectName}`);
-			await info("dir", `Project created at ./$ctx.projectName`);
+			await info("dir", `Project will be created at ./${ctx.projectName}`);
 			return;
 		}
 
 		const name = await text({
-			message: `${title("dir")}Where should we create your project?`,
+			message: "Where should we create your project?",
+			placeholder: "advent-of-code",
 			initialValue: "advent-of-code",
 			validate(value: string) {
 				if (!isEmpty(value)) {
@@ -70,9 +71,6 @@ async function checkCwd(cwd: string | undefined) {
 	const empty = cwd && isEmpty(cwd);
 	if (empty) {
 		log("");
-		await info(
-			"dir",
-			`Using $color.reset(cwd)$color.dim(" as project directory")`,
-		);
+		await info("dir", `Using ${cwd} as project directory`);
 	}
 }

@@ -1,6 +1,6 @@
 import { confirm, isCancel } from "@clack/prompts";
 import type { Context } from "../context";
-import { info, title } from "../messages";
+import { info } from "../messages";
 
 export async function firstDay(
 	ctx: Pick<Context, "cwd" | "firstDay" | "yes" | "dryRun" | "tasks">,
@@ -13,7 +13,7 @@ export async function firstDay(
 	let _firstDay: boolean | symbol = ctx.firstDay ?? ctx.yes ?? false;
 	if (_firstDay === undefined || _firstDay === false) {
 		_firstDay = await confirm({
-			message: `${title("day")}Set up Day 1 to get started?`,
+			message: "Scaffold Day 1 to get started immediately?",
 			initialValue: true,
 		});
 

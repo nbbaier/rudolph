@@ -1,7 +1,7 @@
 import path from "node:path";
 import { isCancel, text } from "@clack/prompts";
 import type { Context } from "../context";
-import { info, title } from "../messages";
+import { info } from "../messages";
 import { isEmpty, toValidName } from "../shared";
 
 export async function solutions(
@@ -17,17 +17,15 @@ export async function solutions(
 	>,
 ) {
 	if (ctx.yes && ctx.projectName) {
-		ctx.solutionsDir = `solutions`;
-		ctx.solutionsPath = path.resolve(ctx.projectName, `./${ctx.solutionsDir}`);
-		await info(
-			"dir",
-			`Solutions directory will be created at ./${ctx.solutionsPath}`,
-		);
+		ctx.solutionsDir = "solutions";
+		ctx.solutionsPath = path.resolve(ctx.projectName, ctx.solutionsDir);
+		await info("dir", `Solutions will live in ./${ctx.projectName}/${ctx.solutionsDir}`);
 		return;
 	}
 
 	const name = await text({
-		message: `${title("dir")}Where should your daily solutions live?`,
+		message: "Folder for your daily solutions (inside the project):",
+		placeholder: "solutions",
 		initialValue: "solutions",
 		validate(value: string) {
 			if (!isEmpty(value)) {

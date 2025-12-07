@@ -1,6 +1,6 @@
 import { isCancel, text } from "@clack/prompts";
 import type { Context } from "../context";
-import { info, title } from "../messages";
+import { info } from "../messages";
 
 export async function getYear(
 	ctx: Pick<Context, "aocYear" | "exit" | "yes" | "dryRun">,
@@ -11,7 +11,7 @@ export async function getYear(
 		return;
 	}
 	const year = await text({
-		message: `${title("year")}Which year are you tackling?`,
+		message: "Which year are you tackling?",
 		initialValue: new Date().getFullYear().toString(),
 		placeholder: new Date().getFullYear().toString(),
 	});

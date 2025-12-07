@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { confirm, isCancel } from "@clack/prompts";
 import type { Context } from "../context";
-import { error, info, title } from "../messages";
+import { error, info } from "../messages";
 import { shell } from "../shell";
 import { color } from "../utils";
 
@@ -23,7 +23,7 @@ export async function git(
 
 	if (_git === undefined || _git === false) {
 		_git = await confirm({
-			message: `${title("git")}Initialize git repository?`,
+			message: "Initialize a git repository and make an initial commit?",
 			initialValue: true,
 		});
 

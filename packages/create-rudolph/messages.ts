@@ -1,11 +1,11 @@
 import { shell } from "./shell";
-import { align, color, label, sleep } from "./utils";
+import { color, getRandomFestiveMessage, label, sleep } from "./utils";
 
 const stdout = process.stdout;
 
 export const log = (message: string) => stdout.write(`${message}\n`);
 
-export const title = (text: string) => `${align(label(text), "end", 7)} `;
+
 
 export const info = async (prefix: string, text: string) => {
 	await sleep(100);
@@ -76,7 +76,7 @@ export const nextSteps = async ({
 	log(`${prefix}${color.cyan(`rudolph run sample`)}  ${color.dim("# Run on sample input")}`);
 
 	await sleep(100);
-	log(`\n${prefix}Happy coding! 🎄✨`);
+	log(`\n${prefix}${color.cyan(getRandomFestiveMessage())}`);
 	await sleep(200);
 };
 

@@ -25,7 +25,7 @@ export async function scaffold(
 	const { projectName, cwd, aocSession, aocYear, aocUserAgent, solutionsDir } =
 		ctx;
 
-	if (!projectName || !cwd || !aocSession || !aocYear || !solutionsDir) {
+	if (!projectName || !cwd || !aocYear || !solutionsDir) {
 		ctx.exit(1);
 	}
 
@@ -37,7 +37,7 @@ export async function scaffold(
 			scaffoldProject({
 				projectName,
 				cwd,
-				aocSession,
+				aocSession: aocSession ?? "",
 				aocYear,
 				aocUserAgent: aocUserAgent ?? "",
 				solutionsDir,
@@ -140,7 +140,7 @@ export async function scaffoldProject(ctx: ScaffoldContext) {
 	);
 
 	await shell("mkdir", ["-p", projectDir]);
-	await shell("mkdir", ["-p", ctx.solutionsDir]);
+	await shell("mkdir", ["-p", path.join(projectDir, ctx.solutionsDir)]);
 	await shell("touch", [path.resolve(projectDir, "package.json")]);
 	await shell("touch", [path.resolve(projectDir, ".env")]);
 	await shell("touch", [path.resolve(projectDir, "README.md")]);

@@ -1,21 +1,25 @@
 import { confirm, isCancel, text } from "@clack/prompts";
 import type { Context } from "../context";
 import { getGitEmail } from "../git-utils";
-import { info, title } from "../messages";
+import { info } from "../messages";
 
 export async function getEmail(
 	ctx: Pick<Context, "aocUserAgent" | "exit" | "yes" | "dryRun">,
 ) {
 	if (ctx.yes) {
-		ctx.aocUserAgent = "FILL OUT MANUALLY";
-		await info("email", ctx.aocUserAgent);
+		ctx.aocUserAgent = "FILL_ME_IN";
+		await info(
+			"email",
+			"Set to FILL_ME_IN in .env; update it if you'd like to include a contact in the User-Agent.",
+		);
 		return;
 	}
 	let _ua: boolean | symbol = false;
 
 	if (ctx.aocUserAgent === undefined) {
 		_ua = await confirm({
-			message: `${title("email")}Include your email for the AOC API? (polite and helpful!)`,
+			message:
+				"Include an email in the User-Agent? (AoC recommends a contact for API usage; optional but polite)",
 			initialValue: true,
 		});
 
@@ -25,10 +29,7 @@ export async function getEmail(
 	}
 
 	if (!_ua) {
-		await info(
-			"Skipped",
-			`You can always add it to .env manually later`,
-		);
+		await info("Skipped", "You can add an email to .env (AOC_USER_AGENT) later.");
 		return;
 	}
 
@@ -36,7 +37,7 @@ export async function getEmail(
 	const gitEmail = await getGitEmail();
 
 	const email = await text({
-		message: `${title("email")}What's your email?`,
+		message: "Email for User-Agent (any contact you're comfortable with):",
 		placeholder: "your.email@example.com",
 		initialValue: gitEmail || "",
 	});

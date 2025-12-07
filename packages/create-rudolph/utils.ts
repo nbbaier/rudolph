@@ -11,6 +11,7 @@ export const color = {
 	whiteBright: (text: string) => chalk.whiteBright(text),
 	bgRed: (text: string) => chalk.bgRed(text),
 	bgCyan: (text: string) => chalk.bgCyan(text),
+	bgGreen: (text: string) => chalk.bgGreen(text),
 };
 
 // Label utility matching @astrojs/cli-kit
@@ -25,13 +26,19 @@ export function label(
 	return result;
 }
 
+// Strip ANSI escape codes for accurate length calculation
+function stripAnsi(text: string): string {
+	return text.replace(/\x1B\[[0-9;]*m/g, "");
+}
+
 // Align utility matching @astrojs/cli-kit
 export function align(
 	text: string,
 	dir: "start" | "end" | "center",
 	len: number,
 ): string {
-	const pad = Math.max(len - text.length, 0);
+	const visualLength = stripAnsi(text).length;
+	const pad = Math.max(len - visualLength, 0);
 	switch (dir) {
 		case "start":
 			return text + " ".repeat(pad);
@@ -52,4 +59,20 @@ export const sleep = (ms: number) =>
 // Random utility matching @astrojs/cli-kit
 export function random<T>(arr: T[]): T {
 	return arr[Math.floor(Math.random() * arr.length)] as T;
+}
+
+// Festive messages for the end of setup
+const FESTIVE_MESSAGES = [
+	"May your algorithms be merry and bright! 🌟",
+	"Rudolph's nose is glowing—you're all set! 🔴",
+	"Time to unwrap some puzzles! 🎁",
+	"Let the coding festivities begin! 🎄",
+	"Your sleigh is fueled and ready! 🛷",
+	"Ho ho ho! Time to solve some puzzles! 🎅",
+	"Jingle all the way to the leaderboard! 🔔",
+	"Deck the halls with lines of code! 💻",
+];
+
+export function getRandomFestiveMessage(): string {
+	return random(FESTIVE_MESSAGES);
 }

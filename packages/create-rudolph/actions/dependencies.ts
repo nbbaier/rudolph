@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { confirm, isCancel } from "@clack/prompts";
 import type { Context } from "../context";
-import { error, info, title } from "../messages";
+import { error, info } from "../messages";
 import { shell } from "../shell";
 import { color } from "../utils";
 
@@ -15,7 +15,7 @@ export async function dependencies(
 	let deps: boolean | symbol = ctx.install ?? ctx.yes ?? false;
 	if (deps === undefined || deps === false) {
 		deps = await confirm({
-			message: `${title("deps")}Install dependencies now?`,
+			message: "Install dependencies?",
 			initialValue: true,
 		});
 
@@ -34,7 +34,7 @@ export async function dependencies(
 			start: `Dependencies installing with ${ctx.packageManager}...`,
 			end: "Dependencies installed",
 			onError: (e) => {
-				error("error", e);
+				error("error", e as string);
 				error(
 					"error",
 					`Dependencies failed to install, please run ${color.bold(
