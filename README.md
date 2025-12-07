@@ -18,6 +18,11 @@ A powerful CLI tool for Advent of Code enthusiasts. Set up, run, submit, and tra
 ✅ **Guess tracking** - Keep track of your submission history
 ✅ **Multi-year support** - Work with multiple AoC years simultaneously
 
+## Prerequisites
+
+- **Node.js** 18+ or **Bun** 1.0+
+- A valid Advent of Code session cookie (see [Configuration](#configuration) section)
+
 ## Quick Start
 
 The easiest way to get started is to initialize a new workspace:
@@ -71,6 +76,22 @@ bun add @nbbaier/rudolph
 
 # With npm
 npm install @nbbaier/rudolph
+```
+
+### Updating
+
+```bash
+# With bun
+bun install -g @nbbaier/rudolph@latest
+
+# With npm
+npm install -g @nbbaier/rudolph@latest
+
+# With pnpm
+pnpm add -g @nbbaier/rudolph@latest
+
+# With yarn
+yarn global upgrade @nbbaier/rudolph
 ```
 
 ## Commands

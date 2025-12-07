@@ -1,7 +1,6 @@
 import dns from "node:dns/promises";
 import fs from "node:fs";
 import path from "node:path";
-import { confirm, isCancel, password, select, text } from "@clack/prompts";
 import {
 	banner,
 	bannerAbort,
@@ -20,6 +19,11 @@ import {
 	runTasks,
 	scaffoldProject,
 	toValidName,
+	handleTextPrompt,
+	handleSelectPrompt,
+	handleConfirmPrompt,
+	handlePasswordPrompt,
+	validators,
 } from "../utils/init";
 
 export interface InitOptions {
@@ -52,6 +56,27 @@ async function showIntro(): Promise<void> {
 	banner(name);
 }
 
+async function handlePackageManager(ctx: InitContext): Promise<void> {
+	if (ctx.yes) {
+		await info("pm", ctx.packageManager);
+		return;
+	}
+
+	ctx.packageManager = await handleSelectPrompt(
+		{
+			message: "Which package manager do you want to use?",
+			options: [
+				{ value: "npm", label: "npm" },
+				{ value: "bun", label: "bun" },
+				{ value: "yarn", label: "yarn" },
+				{ value: "pnpm", label: "pnpm" },
+			],
+			initialValue: ctx.packageManager,
+		},
+		() => ctx.exit(1),
+	);
+}
+
 async function handleProjectName(ctx: InitContext): Promise<void> {
 	const cwdEmpty = isEmpty(ctx.cwd);
 	const hasExistingPackage = hasPackageJson(ctx.cwd);
@@ -70,13 +95,16 @@ async function handleProjectName(ctx: InitContext): Promise<void> {
 			ctx.exit(1);
 		}
 
-		const shouldClear = await confirm({
-			message:
-				"Directory is not empty. Would you like to continue anyway? (existing files may be overwritten)",
-			initialValue: false,
-		});
+		const shouldClear = await handleConfirmPrompt(
+			{
+				message:
+					"Directory is not empty. Would you like to continue anyway? (existing files may be overwritten)",
+				initialValue: false,
+			},
+			() => ctx.exit(1),
+		);
 
-		if (isCancel(shouldClear) || !shouldClear) {
+		if (!shouldClear) {
 			ctx.exit(1);
 		}
 	}
@@ -94,49 +122,17 @@ async function handleProjectName(ctx: InitContext): Promise<void> {
 		return;
 	}
 
-	const name = await text({
-		message: "Project name:",
-		placeholder: defaultName,
-		initialValue: defaultName,
-		validate(value: string) {
-			if (!value.trim()) return "Please enter a project name.";
-			if (value.match(/[^\x20-\x7E]/g) !== null)
-				return "Invalid non-printable character present!";
-			return undefined;
-		},
-	});
-
-	if (isCancel(name)) {
-		ctx.exit(1);
-	}
-
 	ctx.projectName = toValidName(
-		typeof name === "string" ? name.trim() : defaultName,
+		await handleTextPrompt(
+			{
+				message: "Project name:",
+				placeholder: defaultName,
+				validator: validators.projectName,
+			},
+			defaultName,
+			() => ctx.exit(1),
+		),
 	);
-}
-
-async function handlePackageManager(ctx: InitContext): Promise<void> {
-	if (ctx.yes) {
-		await info("pm", ctx.packageManager);
-		return;
-	}
-
-	const pm = await select({
-		message: "Which package manager do you want to use?",
-		options: [
-			{ value: "npm", label: "npm" },
-			{ value: "bun", label: "bun" },
-			{ value: "yarn", label: "yarn" },
-			{ value: "pnpm", label: "pnpm" },
-		],
-		initialValue: ctx.packageManager,
-	});
-
-	if (isCancel(pm)) {
-		ctx.exit(1);
-	}
-
-	ctx.packageManager = pm as string;
 }
 
 async function handleSolutionsDir(ctx: InitContext): Promise<void> {
@@ -147,27 +143,16 @@ async function handleSolutionsDir(ctx: InitContext): Promise<void> {
 		return;
 	}
 
-	const name = await text({
-		message: "Folder for your daily solutions:",
-		placeholder: "solutions",
-		initialValue: "solutions",
-		validate(value: string) {
-			if (!value) return "Please enter a folder name.";
-			const candidate = path.resolve(ctx.cwd, value);
-			if (!isEmpty(candidate)) {
-				return "Directory is not empty!";
-			}
-			if (value.match(/[^\x20-\x7E]/g) !== null)
-				return "Invalid non-printable character present!";
-			return undefined;
+	ctx.solutionsDir = await handleTextPrompt(
+		{
+			message: "Folder for your daily solutions:",
+			placeholder: "solutions",
+			validator: (value) =>
+				validators.directoryName(value, ctx.cwd),
 		},
-	});
-
-	if (isCancel(name)) {
-		ctx.exit(1);
-	}
-
-	ctx.solutionsDir = typeof name === "string" ? name.trim() : "solutions";
+		"solutions",
+		() => ctx.exit(1),
+	);
 	ctx.solutionsPath = path.resolve(ctx.cwd, ctx.solutionsDir);
 }
 
@@ -180,17 +165,14 @@ async function handleYear(ctx: InitContext): Promise<void> {
 		return;
 	}
 
-	const year = await text({
-		message: "Which year are you tackling?",
-		initialValue: currentYear,
-		placeholder: currentYear,
-	});
-
-	if (isCancel(year)) {
-		ctx.exit(1);
-	}
-
-	ctx.aocYear = typeof year === "string" ? year.trim() : currentYear;
+	ctx.aocYear = await handleTextPrompt(
+		{
+			message: "Which year are you tackling?",
+			placeholder: currentYear,
+		},
+		currentYear,
+		() => ctx.exit(1),
+	);
 }
 
 async function handleSession(ctx: InitContext): Promise<void> {
@@ -203,15 +185,14 @@ async function handleSession(ctx: InitContext): Promise<void> {
 		return;
 	}
 
-	const wantsSession = await confirm({
-		message:
-			"Download puzzle inputs automatically? (requires your AoC session cookie, stored locally in .env)",
-		initialValue: true,
-	});
-
-	if (isCancel(wantsSession)) {
-		ctx.exit(1);
-	}
+	const wantsSession = await handleConfirmPrompt(
+		{
+			message:
+				"Download puzzle inputs automatically? (requires your AoC session cookie, stored locally in .env)",
+			initialValue: true,
+		},
+		() => ctx.exit(1),
+	);
 
 	if (!wantsSession) {
 		ctx.aocSession = "FILL_ME_IN";
@@ -219,16 +200,13 @@ async function handleSession(ctx: InitContext): Promise<void> {
 		return;
 	}
 
-	const session = await password({
-		message:
-			"Paste your 'session' cookie from adventofcode.com (found in browser dev tools):",
-	});
-
-	if (isCancel(session)) {
-		ctx.exit(1);
+	ctx.aocSession = await handlePasswordPrompt(
+		"Paste your 'session' cookie from adventofcode.com (found in browser dev tools):",
+		() => ctx.exit(1),
+	);
+	if (!ctx.aocSession) {
+		ctx.aocSession = "FILL_ME_IN";
 	}
-
-	ctx.aocSession = typeof session === "string" ? session.trim() : "FILL_ME_IN";
 }
 
 async function handleEmail(ctx: InitContext): Promise<void> {
@@ -241,15 +219,14 @@ async function handleEmail(ctx: InitContext): Promise<void> {
 		return;
 	}
 
-	const wantsEmail = await confirm({
-		message:
-			"Include an email in the User-Agent? (AoC recommends a contact for API usage; optional but polite)",
-		initialValue: true,
-	});
-
-	if (isCancel(wantsEmail)) {
-		ctx.exit(1);
-	}
+	const wantsEmail = await handleConfirmPrompt(
+		{
+			message:
+				"Include an email in the User-Agent? (AoC recommends a contact for API usage; optional but polite)",
+			initialValue: true,
+		},
+		() => ctx.exit(1),
+	);
 
 	if (!wantsEmail) {
 		await info(
@@ -261,31 +238,27 @@ async function handleEmail(ctx: InitContext): Promise<void> {
 
 	const gitEmail = await getGitEmail();
 
-	const email = await text({
-		message: "Email for User-Agent (any contact you're comfortable with):",
-		placeholder: "your.email@example.com",
-		initialValue: gitEmail || "",
-	});
-
-	if (isCancel(email)) {
-		ctx.exit(1);
-	}
-
-	ctx.aocUserAgent = typeof email === "string" ? email.trim() : "";
+	ctx.aocUserAgent = await handleTextPrompt(
+		{
+			message: "Email for User-Agent (any contact you're comfortable with):",
+			placeholder: "your.email@example.com",
+		},
+		gitEmail || "",
+		() => ctx.exit(1),
+	);
 }
 
 async function handleDependencies(ctx: InitContext): Promise<void> {
 	let deps: boolean | symbol = ctx.install ?? ctx.yes ?? false;
 
 	if (deps === false) {
-		deps = await confirm({
-			message: "Install dependencies?",
-			initialValue: true,
-		});
-
-		if (isCancel(deps)) {
-			deps = false;
-		}
+		deps = await handleConfirmPrompt(
+			{
+				message: "Install dependencies?",
+				initialValue: true,
+			},
+			() => ctx.exit(1),
+		);
 
 		ctx.install = deps as boolean;
 	}
@@ -338,14 +311,13 @@ async function handleGit(ctx: InitContext): Promise<void> {
 	let _git: boolean | symbol = ctx.git ?? ctx.yes ?? false;
 
 	if (_git === false) {
-		_git = await confirm({
-			message: "Initialize a git repository and make an initial commit?",
-			initialValue: true,
-		});
-
-		if (isCancel(_git)) {
-			_git = false;
-		}
+		_git = await handleConfirmPrompt(
+			{
+				message: "Initialize a git repository and make an initial commit?",
+				initialValue: true,
+			},
+			() => ctx.exit(1),
+		);
 	}
 
 	if (ctx.dryRun) {
