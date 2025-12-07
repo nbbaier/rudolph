@@ -35,9 +35,7 @@
 	"dependencies": {
 		"@clack/prompts": "^0.11.0",
 		"commander": "^14.0.2",
-		"defuddle": "^0.6.6",
 		"eta": "^4.4.1",
-		"jsdom": "^27.2.0",
 		"picocolors": "^1.1.1",
 		"remark-frontmatter": "^5.0.0",
 		"remark-normalize-headings": "^4.0.0",

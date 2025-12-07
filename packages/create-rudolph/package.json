@@ -31,12 +31,7 @@
 	"license": "MIT",
 	"dependencies": {
 		"@astrojs/cli-kit": "^0.4.1",
-		"@inquirer/prompts": "^8.0.2",
-		"arg": "^5.0.2",
-		"chalk": "^5.0.1",
-		"linkedom": "nbbaier/linkedom",
-		"log-update": "^5.0.1",
-		"sisteransi": "^1.0.5"
+		"arg": "^5.0.2"
 	},
 	"devDependencies": {
 		"@types/bun": "latest"
