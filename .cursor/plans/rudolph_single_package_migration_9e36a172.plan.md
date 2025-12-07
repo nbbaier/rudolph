@@ -4,31 +4,31 @@ overview: Consolidate the monorepo into a single `@nbbaier/rudolph` package by m
 todos:
   - id: restructure
     content: Move packages/rudolph to root and merge package.json dependencies
-    status: pending
+    status: completed
   - id: config
     content: Update tsconfig, biome.json, and build config for single package
-    status: pending
+    status: completed
   - id: init-command
     content: Create src/commands/init.ts with full scaffolding logic
-    status: pending
+    status: completed
   - id: init-utils
     content: Port init utilities (prompts, tasks, validation) to src/utils/init/
-    status: pending
+    status: completed
   - id: wire-init
     content: Add init command to main CLI entry point
-    status: pending
+    status: completed
   - id: unit-tests
     content: Write unit tests for init utilities and existing utils
-    status: pending
+    status: completed
   - id: integration-tests
     content: Write integration tests with mocked filesystem/network
-    status: pending
+    status: completed
   - id: e2e-tests
     content: Write e2e tests that run actual CLI commands
-    status: pending
+    status: completed
   - id: cleanup
     content: Remove packages/ directory and update README
-    status: pending
+    status: completed
 ---
 
 # Rudolph Single Package Migration
@@ -58,10 +58,10 @@ todos:
 4. **Init command behavior (cwd-only)**
 
 - Check if cwd is empty:
- - **Empty**: Initialize new project in place
- - **Not empty**: Check for existing `package.json`:
- - **Has package.json**: Augment existing project
- - **No package.json**: Prompt to clear directory or exit
+- **Empty**: Initialize new project in place
+- **Not empty**: Check for existing `package.json`:
+- **Has package.json**: Augment existing project
+- **No package.json**: Prompt to clear directory or exit
 - Prompts in order: package manager, project name, solutions dir, year, AOC_SESSION (required), email (optional), install deps, init git, fetch current day
 - Display summary, confirm, execute tasks
 - Show next steps
@@ -97,5 +97,5 @@ todos:
 
 10. **Update publish workflow**
 
- - Single `npm publish` command
- - Update scripts in `package.json`
+- Single `npm publish` command
+- Update scripts in `package.json`
