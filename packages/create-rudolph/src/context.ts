@@ -1,3 +1,4 @@
+import path from "node:path";
 import arg from "arg";
 
 export interface Task {
@@ -13,7 +14,9 @@ export interface Context {
 	packageManager: string;
 	dryRun?: boolean;
 	yes?: boolean;
+	debugScaffold?: boolean;
 	projectName?: string;
+	projectNameExplicitlyProvided?: boolean;
 	install?: boolean;
 	git?: boolean;
 	solutionsDir?: string;
@@ -39,6 +42,7 @@ export async function getContext(argv: string[]): Promise<Context> {
 			"--aoc-user-agent": String,
 			"--aoc-year": String,
 			"--first-day": Boolean,
+			"--debug-scaffold": Boolean,
 			"-y": "--yes",
 			"-n": "--no",
 		},
@@ -46,7 +50,7 @@ export async function getContext(argv: string[]): Promise<Context> {
 	);
 
 	const packageManager = detectPackageManager() ?? "npm";
-	const cwd = flags._[0];
+	const targetDir = flags._[0];
 	let {
 		"--no": no,
 		"--yes": yes,
@@ -55,8 +59,9 @@ export async function getContext(argv: string[]): Promise<Context> {
 		"--git": git,
 		"--no-git": noGit,
 		"--dry-run": dryRun,
+		"--debug-scaffold": debugScaffold,
 	} = flags;
-	const projectName = cwd;
+	const projectName = targetDir;
 
 	if (no) {
 		yes = false;
@@ -64,19 +69,29 @@ export async function getContext(argv: string[]): Promise<Context> {
 		if (git === undefined) git = false;
 	}
 
+	// Resolve the target directory relative to the current working directory
+	const resolvedCwd = targetDir
+		? path.resolve(process.cwd(), targetDir)
+		: process.cwd();
+
 	const context: Context = {
 		packageManager,
 		dryRun,
+		debugScaffold,
 		projectName,
+		projectNameExplicitlyProvided: !!targetDir,
 		yes,
 		install: install ?? (noInstall ? false : undefined),
 		git: git ?? (noGit ? false : undefined),
-		cwd: process.cwd(),
+		cwd: resolvedCwd,
 		exit(code) {
 			process.exit(code);
 		},
 		tasks: [],
 	};
+	if (context.debugScaffold) {
+		process.env.DEBUG_SCAFFOLD = "1";
+	}
 	return context;
 }
 

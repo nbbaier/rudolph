@@ -25,6 +25,8 @@
 		"build": "tsdown",
 		"dev": "bun src/index.ts",
 		"test": "bun test",
+		"debug:scaffold": "bun src/debug-scaffold.ts",
+		"debug:cli": "DEBUG_SCAFFOLD=1 bun src/index.ts",
 		"prepublishOnly": "npm run build",
 		"typecheck": "tsc --noEmit"
 	},
