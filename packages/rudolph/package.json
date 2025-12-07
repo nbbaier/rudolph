@@ -1,6 +1,6 @@
 {
 	"name": "rudolph",
-	"version": "1.0.0",
+	"version": "0.1.0",
 	"description": "Advent of Code CLI - scaffold, run, and manage AoC solutions",
 	"type": "module",
 	"bin": {
@@ -44,6 +44,7 @@
 		"remark-parse": "^11.0.0",
 		"remark-stringify": "^11.0.0",
 		"remark-unlink": "^5.0.0",
+		"tsx": "^4.19.0",
 		"unified": "^11.0.5",
 		"yaml": "^2.8.2",
 		"zod": "^4.1.13"
@@ -51,10 +52,8 @@
 	"devDependencies": {
 		"@types/mdast": "^4.0.4",
 		"@types/jsdom": "^27.0.0",
-		"@types/node": "^24.10.1",
+		"@types/node": "^22.9.0",
+		"typescript": "^5.9.3",
 		"tsdown": "^0.17.0"
-	},
-	"optionalDependencies": {
-		"tsx": "^4.19.0"
 	}
 }
