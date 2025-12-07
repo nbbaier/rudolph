@@ -1,13 +1,8 @@
 # rudolph: an Advent of Code helper
 
 <div align="center">
-  <img src="./banner.png" alt="Description">
+  <img src="./new.png" alt="Description">
 </div>
-
-
-
-
-
 
 Advent of Code CLI - scaffold, run, and manage AoC solutions.
 
@@ -29,11 +24,11 @@ yarn global add rudolph
 
 ### Runtime Requirements
 
-- **Bun**: Full support out of the box (recommended)
-- **Node.js 18+**: Requires `tsx` for running TypeScript solutions. Install it globally or in your project:
-  ```bash
-  npm install -g tsx
-  ```
+-  **Bun**: Full support out of the box (recommended)
+-  **Node.js 18+**: Requires `tsx` for running TypeScript solutions. Install it globally or in your project:
+   ```bash
+   npm install -g tsx
+   ```
 
 ## Quick Start
 
@@ -58,11 +53,11 @@ OUTPUT_DIR=./aoc
 AOC_YEAR=2024
 ```
 
-| Variable      | Description                                                         | Default                                      |
-| ------------- | ------------------------------------------------------------------- | -------------------------------------------- |
-| `AOC_SESSION` | Your AoC session cookie (required for downloading)                  | -                                            |
-| `OUTPUT_DIR`  | Where to scaffold puzzle files                                      | `./aoc`                                      |
-| `AOC_YEAR`    | Default year for puzzles                                            | Current year (or previous year before Dec)   |
+| Variable      | Description                                        | Default                                    |
+| ------------- | -------------------------------------------------- | ------------------------------------------ |
+| `AOC_SESSION` | Your AoC session cookie (required for downloading) | -                                          |
+| `OUTPUT_DIR`  | Where to scaffold puzzle files                     | `./aoc`                                    |
+| `AOC_YEAR`    | Default year for puzzles                           | Current year (or previous year before Dec) |
 
 To get your session cookie:
 
