@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 import { dependencies } from "./actions/dependencies";
 import { getEmail } from "./actions/get-email";
 import { getSession } from "./actions/get-session";

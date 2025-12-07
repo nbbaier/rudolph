@@ -23,10 +23,12 @@ A powerful CLI tool for Advent of Code enthusiasts. Set up, run, submit, and tra
 The easiest way to get started is to use **[create-rudolph](./packages/create-rudolph)** to scaffold a new workspace:
 
 ```bash
-bunx create-rudolph advent-of-code
+bunx create-rudolph@next advent-of-code
 cd advent-of-code
 rudolph setup
 ```
+
+> **Note**: This is an early release. Use the `@next` tag to install the latest pre-release version.
 
 ## Installation
 
@@ -34,16 +36,16 @@ If you're setting up manually in an existing project:
 
 ```bash
 # With bun (recommended)
-bun install -g rudolph
+bun install -g rudolph@next
 
 # With npm
-npm install -g rudolph
+npm install -g rudolph@next
 
 # With pnpm
-pnpm add -g rudolph
+pnpm add -g rudolph@next
 
 # With yarn
-yarn global add rudolph
+yarn global add rudolph@next
 ```
 
 ## Examples

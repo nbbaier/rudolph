@@ -2,26 +2,28 @@
 
 The easiest way to start your Advent of Code journey. Scaffolds a new workspace with the [`rudolph`](../rudolph) CLI pre-configured.
 
+> **Note**: This is an early release. Use the `@next` tag to install the latest pre-release version.
+
 ## Usage
 
 Run the interactive setup wizard:
 
 ```bash
 # Using bun (recommended)
-bun create rudolph # defaults to advent-of-code
-bun create rudolph my-aoc-project # creates a new project called my-aoc-project
+bun create rudolph@next # defaults to advent-of-code
+bun create rudolph@next my-aoc-project # creates a new project called my-aoc-project
 
 # Using npm
-npm create rudolph
-npm create rudolph my-aoc-project
+npm create rudolph@next
+npm create rudolph@next my-aoc-project
 
 # Using pnpm
-pnpm create rudolph
-pnpm create rudolph my-aoc-project
+pnpm create rudolph@next
+pnpm create rudolph@next my-aoc-project
 
 # Using yarn
-yarn create rudolph
-yarn create rudolph my-aoc-project
+yarn create rudolph@next
+yarn create rudolph@next my-aoc-project
 
 ```
 

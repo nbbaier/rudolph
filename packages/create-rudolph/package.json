@@ -1,18 +1,28 @@
 {
 	"name": "create-rudolph",
 	"version": "0.1.0",
-	"description": "Scaffold a new Advent of Code workspace with rudolph CLI",
+	"description": "Scaffold a new Advent of Code workspace with rudolph CLI (Early Release)",
 	"type": "module",
-	"module": "src/index.ts",
+	"author": "nbbaier",
+	"license": "MIT",
+	"repository": "https://github.com/nbbaier/rudolph",
+	"bugs": "https://github.com/nbbaier/rudolph/issues",
 	"bin": {
-		"create-rudolph": "./src/index.ts"
+		"create-rudolph": "./dist/index.mjs"
 	},
 	"files": [
-		"src"
+		"dist"
 	],
+	"exports": {
+		".": {
+			"import": "./dist/index.mjs"
+		}
+	},
 	"scripts": {
+		"build": "tsdown",
 		"dev": "bun src/index.ts",
 		"test": "echo 'No tests yet'",
+		"prepublishOnly": "npm run build",
 		"typecheck": "tsc --noEmit"
 	},
 	"keywords": [
@@ -22,7 +32,6 @@
 		"scaffold",
 		"create"
 	],
-	"license": "MIT",
 	"dependencies": {
 		"@clack/prompts": "^0.11.0",
 		"chalk": "^5.3.0",
@@ -31,7 +40,8 @@
 	"devDependencies": {
 		"@types/bun": "^1.1.13",
 		"@types/node": "^22.9.0",
-		"typescript": "^5.9.3"
+		"typescript": "^5.9.3",
+		"tsdown": "^0.17.0"
 	},
 	"peerDependencies": {
 		"typescript": "^5.9.3"
