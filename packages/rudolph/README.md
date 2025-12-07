@@ -24,7 +24,7 @@ yarn global add rudolph
 # Create .env file with your session cookie
 echo "AOC_SESSION=your-session-cookie" > .env
 
-# Set up today's puzzle
+# Set up today's puzzle (Downloads input/puzzle and scaffolds aoc/<year>/dayXX files)
 rudolph setup
 
 # Run solution against sample input
@@ -44,7 +44,7 @@ rudolph setup
 
 ## Configuration
 
-Rudolph uses a `.env` file for configuration. It looks for this file in your current directory and parent directories.
+Rudolph uses a `.env` file for configuration. It searches the current directory and parent directories, so commands work from subfolders if an upstream `.env` exists.
 
 ```env
 AOC_SESSION=your-session-cookie
@@ -65,6 +65,81 @@ OUTPUT_DIR=./aoc
 1. Log in to [adventofcode.com](https://adventofcode.com)
 2. Open browser dev tools → Application (or Storage) → Cookies
 3. Copy the value of the `session` cookie
+
+## Examples
+
+### Basic workflow
+
+```bash
+# Set up today's puzzle
+rudolph setup
+
+# Test with sample input
+rudolph run sample
+
+# Run with real input
+rudolph run input
+
+# Submit your answer
+rudolph answer 2024 1 1
+```
+
+### Working with multiple days
+
+```bash
+# Set up multiple days at once
+for day in {1..5}; do rudolph setup -d $day; done
+
+# Run all solutions
+for day in {1..5}; do rudolph run input -d $day; done
+```
+
+Brace expansion works in bash/zsh (macOS default). On Windows PowerShell, use:
+
+```pwsh
+1..5 | ForEach-Object { rudolph setup -d $_ }
+1..5 | ForEach-Object { rudolph run input -d $_ }
+```
+
+### Performance Tips
+
+-  Use `rudolph run sample` first to test your solution before running against the full input
+-  For large inputs, consider streaming processing to avoid memory issues
+-  Use the `--json` flag for machine-readable output when scripting
+
+## Advanced Configuration
+
+### Multiple Environments
+
+```env
+# .env.production
+AOC_SESSION=prod-session-cookie
+AOC_YEAR=2024
+OUTPUT_DIR=./aoc-prod
+
+# .env.development
+AOC_SESSION=dev-session-cookie
+AOC_YEAR=2023
+OUTPUT_DIR=./aoc-dev
+```
+
+### Custom User Agent
+
+```env
+AOC_USER_AGENT=my-aoc-bot@example.com
+```
+
+## Error Handling
+
+### Common Errors
+
+**Invalid Session Cookie**: If you see "403 Forbidden" errors, your session cookie may be invalid. Double-check it matches your browser's cookie.
+
+**Rate Limiting**: Advent of Code may rate limit requests. Wait a few minutes and try again.
+
+**Missing Input**: If input.txt is missing, run `rudolph input` to download it.
+
+**Network Issues**: If you experience connection problems, check your internet connection and try again.
 
 ## Commands
 
@@ -162,7 +237,7 @@ aoc/
 ## Requirements
 
 -  **Runtime**: Bun (recommended) or Node.js 18+ (requires `tsx` for TypeScript execution)
--  **AoC Session**: You must provide your session cookie in `.env` to fetch inputs and submit answers
+-  **AoC Session**: Provide your session cookie in `.env` before running commands to fetch inputs and submit answers
 
 ## License
 
