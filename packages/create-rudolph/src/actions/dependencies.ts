@@ -3,8 +3,8 @@ import path from "node:path";
 import { confirm, isCancel } from "@clack/prompts";
 import type { Context } from "../context";
 import { exec } from "../lib/exec";
-import { error, info } from "../ui/messages";
 import { color } from "../ui/colors";
+import { error, info } from "../ui/messages";
 
 export async function dependencies(
 	ctx: Pick<

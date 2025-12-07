@@ -1,7 +1,7 @@
-import { describe, test, expect, beforeEach, afterEach } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import fs from "node:fs";
-import path from "node:path";
 import os from "node:os";
+import path from "node:path";
 import { scaffoldProject } from "./scaffold";
 
 describe("scaffoldProject", () => {
@@ -91,10 +91,7 @@ describe("scaffoldProject", () => {
 			solutionsDir: "solutions",
 		});
 
-		const envContent = fs.readFileSync(
-			path.join(projectDir, ".env"),
-			"utf-8",
-		);
+		const envContent = fs.readFileSync(path.join(projectDir, ".env"), "utf-8");
 
 		expect(envContent).toContain("AOC_SESSION=abc123");
 		expect(envContent).toContain("AOC_YEAR=2023");
@@ -115,10 +112,7 @@ describe("scaffoldProject", () => {
 			solutionsDir: "solutions",
 		});
 
-		const readme = fs.readFileSync(
-			path.join(projectDir, "README.md"),
-			"utf-8",
-		);
+		const readme = fs.readFileSync(path.join(projectDir, "README.md"), "utf-8");
 
 		expect(readme).toContain("# my-advent");
 		expect(readme).toContain("Advent of Code 2024");

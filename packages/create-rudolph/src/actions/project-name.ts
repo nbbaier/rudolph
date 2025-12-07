@@ -1,9 +1,9 @@
 import path from "node:path";
 import { isCancel, text } from "@clack/prompts";
 import type { Context } from "../context";
-import { info, log } from "../ui/messages";
 import { isEmpty, toValidName } from "../lib/validation";
 import { color } from "../ui/colors";
+import { info, log } from "../ui/messages";
 
 export async function projectName(
 	ctx: Pick<

@@ -1,8 +1,8 @@
 import path from "node:path";
 import { isCancel, text } from "@clack/prompts";
 import type { Context } from "../context";
-import { info } from "../ui/messages";
 import { isEmpty } from "../lib/validation";
+import { info } from "../ui/messages";
 
 export async function solutions(
 	ctx: Pick<
