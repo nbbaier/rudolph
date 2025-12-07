@@ -24,15 +24,15 @@ yarn create rudolph advent-of-code
 
 The `create-rudolph` tool automates the setup process:
 
-1. **Project Creation**: Creates a directory with your chosen name.
-2. **TypeScript Setup**: Configures `tsconfig.json` for modern TypeScript.
-3. **CLI Installation**: Installs `rudolph` as a dependency.
-4. **Environment Config**: Interactive wizard to set your:
+1. **Project Creation** — Creates a directory with your chosen name.
+2. **TypeScript Setup** — Configures `tsconfig.json` for modern TypeScript.
+3. **CLI Installation** — Installs `rudolph` as a dependency.
+4. **Environment Config** — Interactive wizard to set your:
    -  AoC Session Cookie
    -  Target Year
    -  User-Agent Email
-5. **Git Initialization**: Optionally initializes a git repository.
-6. **First Day Setup**: Optionally scaffolds Day 01 immediately.
+5. **Git Initialization** — Optionally initializes a git repository.
+6. **First Day Setup** — Optionally scaffolds Day 01 immediately.
 
 ## After Creation
 
@@ -41,7 +41,7 @@ Once your workspace is ready:
 ```bash
 cd advent-of-code
 
-# Set up today's puzzle (if strictly working on current calendar day)
+# Set up today's puzzle
 rudolph setup
 
 # Set up a specific day
@@ -61,16 +61,16 @@ rudolph answer 2024 1 1
 
 ```
 advent-of-code/
-├── .env                 # Secrets (AOC_SESSION)
-├── package.json         # Dependencies
-├── tsconfig.json        # TS Config
-└── aoc/                 # Solutions Directory
+├── .env           # Secrets (AOC_SESSION)
+├── package.json   # Dependencies
+├── tsconfig.json  # TS Config
+└── aoc/           # Solutions Directory
     └── 2024/
         └── day01/
-            ├── index.ts      # Solution logic
-            ├── puzzle.md     # Puzzle description
-            ├── input.txt     # Puzzle input
-            └── sample.txt    # Sample input
+            ├── index.ts   # Solution logic
+            ├── puzzle.md  # Puzzle description
+            ├── input.txt  # Puzzle input
+            └── sample.txt # Sample input
 ```
 
 ## License

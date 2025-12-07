@@ -36,7 +36,7 @@ yarn global add rudolph
 
 For full command documentation and configuration details, see the [rudolph package README](./packages/rudolph/README.md).
 
-## Project Structure
+## Packages
 
 This is a monorepo containing:
 
@@ -52,7 +52,7 @@ bun install
 # Build all packages
 bun run build
 
-# Run dev server (executes rudolph CLI)
+# Run rudolph CLI in dev mode
 bun run dev
 
 # Run linting
@@ -61,7 +61,10 @@ bun run lint
 # Fix linting issues
 bun run lint:fix
 
-# Type check
+# Format code
+bun run format:fix
+
+# Type check all packages
 bun run typecheck
 ```
 

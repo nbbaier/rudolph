@@ -55,9 +55,9 @@ OUTPUT_DIR=./aoc
 
 | Variable         | Description                                                | Default                             |
 | ---------------- | ---------------------------------------------------------- | ----------------------------------- |
-| `AOC_SESSION`    | Your AoC session cookie (required for fetching/submitting) | -                                   |
+| `AOC_SESSION`    | Your AoC session cookie (required for fetching/submitting) | —                                   |
 | `AOC_YEAR`       | Default year for commands                                  | Current year (or previous if < Dec) |
-| `AOC_USER_AGENT` | Email for User-Agent header (polite for AoC)               | -                                   |
+| `AOC_USER_AGENT` | Email for User-Agent header (polite for AoC)               | —                                   |
 | `OUTPUT_DIR`     | Directory where solutions are generated                    | `./aoc`                             |
 
 ### Getting Your Session Cookie
@@ -70,48 +70,46 @@ OUTPUT_DIR=./aoc
 
 ### Setup & Fetching
 
-Initialize a new day or fetch specific data.
+-  **`rudolph setup [year] [day]`** — Create solution files, download input, and fetch puzzle.
 
--  **`rudolph setup`**: Create solution files, download input, and fetch puzzle.
-
-   -  `-y, --year <year>`: Year (default: `AOC_YEAR` or current)
-   -  `-d, --day <day>`: Day (default: today)
+   -  `[year]`: Year (default: `AOC_YEAR` or current)
+   -  `[day]`: Day (default: today)
    -  `-f, --force`: Overwrite existing files
    -  `-o, --output-dir <dir>`: Custom output directory
 
--  **`rudolph input`**: Download puzzle input to `input.txt`.
+-  **`rudolph input [year] [day]`** — Download puzzle input to `input.txt`.
 
-   -  `-y, --year <year>`
-   -  `-d, --day <day>`
+   -  `[year]`: Year (default: `AOC_YEAR` or current)
+   -  `[day]`: Day (default: today)
    -  `-f, --force`: Re-download even if exists
    -  `-o, --output-dir <dir>`
 
--  **`rudolph puzzle`**: Download puzzle description to `puzzle.md` (uses cache if available).
+-  **`rudolph puzzle [year] [day]`** — Download puzzle description to `puzzle.md` (uses cache if available).
 
-   -  `-y, --year <year>`
-   -  `-d, --day <day>`
+   -  `[year]`: Year (default: `AOC_YEAR` or current)
+   -  `[day]`: Day (default: today)
    -  `-f, --force`: Re-download even if exists
    -  `--no-print`: Don't print puzzle to console
    -  `-o, --output-dir <dir>`
 
--  **`rudolph refresh`**: Re-fetch puzzle description (useful for getting Part 2 after solving Part 1).
-   -  `-y, --year <year>`
-   -  `-d, --day <day>`
+-  **`rudolph refresh [year] [day]`** — Re-fetch puzzle description (useful for getting Part 2 after solving Part 1).
+   -  `[year]`: Year (default: `AOC_YEAR` or current)
+   -  `[day]`: Day (default: today)
    -  `-f, --force`: Force refresh even if Part 1 isn't complete locally
    -  `-o, --output-dir <dir>`
 
 ### Running Solutions
 
--  **`rudolph run <target>`**: Run your solution with timing.
+-  **`rudolph run <target> [year] [day] [part]`** — Run your solution with timing.
    -  `<target>`: `sample` or `input`
-   -  `-y, --year <year>`
-   -  `-d, --day <day>`
-   -  `-p, --part <part>`: `1`, `2`, or `both` (default: `both`)
+   -  `[year]`: Year (default: `AOC_YEAR` or current)
+   -  `[day]`: Day (default: today)
+   -  `[part]`: `1`, `2`, or `both` (default: `both`)
    -  `-o, --output-dir <dir>`
 
 ### Submitting & Tracking
 
--  **`rudolph answer <year> <day> <part>`**: Run solution and submit answer to AoC.
+-  **`rudolph answer <year> <day> <part>`** — Run solution and submit answer to AoC.
 
    -  `<year>`: Year (e.g., 2024)
    -  `<day>`: Day number (1-25)
@@ -119,15 +117,15 @@ Initialize a new day or fetch specific data.
    -  `--no-refresh`: Skip auto-refreshing puzzle after correct Part 1
    -  `-o, --output-dir <dir>`
 
--  **`rudolph guesses`**: Show guess history for a specific day.
+-  **`rudolph guesses [year] [day]`** — Show guess history for a specific day.
 
-   -  `-y, --year <year>`
-   -  `-d, --day <day>`
+   -  `[year]`: Year (default: `AOC_YEAR` or current)
+   -  `[day]`: Day (default: today)
    -  `--json`: Output as JSON
    -  `-o, --output-dir <dir>`
 
--  **`rudolph stars`**: Show collected stars for a year (based on recorded guesses).
-   -  `-y, --year <year>`
+-  **`rudolph stars [year]`** — Show collected stars for a year (based on recorded guesses).
+   -  `[year]`: Year (default: `AOC_YEAR` or current)
    -  `--json`: Output as JSON
    -  `-o, --output-dir <dir>`
 
@@ -136,7 +134,6 @@ Initialize a new day or fetch specific data.
 Generated `index.ts` files follow this structure:
 
 ```typescript
-// input is the raw content of input.txt or sample.txt
 export default {
    p1: (input: string) => {
       // Solve Part 1
@@ -155,10 +152,10 @@ export default {
 aoc/
 └── 2024/
     └── day01/
-        ├── index.ts      # Solution file
-        ├── puzzle.md     # Puzzle description
-        ├── input.txt     # Your puzzle input
-        ├── sample.txt    # Sample input (fill this in)
+        ├── index.ts       # Solution file
+        ├── puzzle.md      # Puzzle description
+        ├── input.txt      # Your puzzle input
+        ├── sample.txt     # Sample input (fill this in)
         └── guesses.ndjson # Guess history
 ```
 
