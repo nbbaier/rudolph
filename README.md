@@ -1,10 +1,10 @@
 # rudolph: an Advent of Code helper
 
 <div align="center">
-  <img src="./banner.png" alt="Description">
+  <img src="./banner.png" alt="Rudolph banner">
 </div>
 
-Advent of Code CLI - scaffold, run, and manage AoC solutions.
+Advent of Code CLI - set up, run, submit, and track AoC solutions.
 
 ## Installation
 
@@ -36,11 +36,14 @@ yarn global add rudolph
 # Create a .env file with your session cookie
 echo "AOC_SESSION=your-session-cookie" > .env
 
-# Scaffold today's puzzle
-rudolph scaffold
+# Set up today's puzzle (creates files, fetches input+puzzle)
+rudolph setup
 
-# Scaffold a specific day
-rudolph scaffold -d 1 -y 2024
+# Set up a specific day (year day)
+rudolph setup 2024 1
+
+# Full interactive setup
+rudolph init
 ```
 
 ## Configuration
@@ -67,74 +70,20 @@ To get your session cookie:
 
 ## Commands
 
-### `rudolph scaffold`
+**Core (fetch / submit / track)**
 
-Set up a new day - creates solution files, downloads input and puzzle description.
+-  `rudolph input`: download puzzle input to `input.txt` (cached). Options: `-d/--day`, `-y/--year`, `-o/--output-dir`, `-f/--force`.
+-  `rudolph puzzle`: download puzzle text to `puzzle.md` (uses cache if present) and print to stdout by default. Options: `-d/--day`, `-y/--year`, `-o/--output-dir`, `-f/--force`, `--no-print`.
+-  `rudolph refresh`: re-download puzzle; blocks unless part 1 is recorded complete; `--force` overrides. Options: `-d/--day`, `-y/--year`, `-o/--output-dir`, `-f/--force`.
+-  `rudolph answer`: run solution against `input.txt`, submit to AoC with guardrails (duplicate/high/low/locked/cooldown), and log guesses (cache + project). Positional args: `<year> <day> <part>`; Options: `-o/--output-dir`, `--no-refresh`.
+-  `rudolph stars`: show stars per day for a year from guess history. Options: `-y/--year` (defaults to current or previous before Dec), `-o/--output-dir`, `--json`.
+-  `rudolph guesses`: display guess history for a day. Options: `-d/--day`, `-y/--year`, `-o/--output-dir`, `--json`.
 
-```bash
-rudolph scaffold [options]
+**Ergonomics (setup / run / init)**
 
-Options:
-  -d, --day <day>         Day number (1-25), defaults to today
-  -y, --year <year>       Year, defaults to current year (or previous year before December)
-  -f, --force             Force re-scaffold even if files exist
-  -o, --output-dir <dir>  Override output directory
-```
-
-### `rudolph try` (alias: `sample`)
-
-Run your solution against `sample.txt`.
-
-```bash
-rudolph try [options]
-
-Options:
-  -d, --day <day>         Day number (1-25)
-  -y, --year <year>       Year
-  -p, --part <part>       Which part to run (1, 2, or both). Default: both
-  -o, --output-dir <dir>  Override output directory
-```
-
-### `rudolph attempt` (alias: `run`)
-
-Run your solution against `input.txt` with timing.
-
-```bash
-rudolph attempt [options]
-
-Options:
-  -d, --day <day>         Day number (1-25)
-  -y, --year <year>       Year
-  -p, --part <part>       Which part to run (1, 2, or both). Default: both
-  -o, --output-dir <dir>  Override output directory
-```
-
-### `rudolph read`
-
-Download puzzle description to `puzzle.md`.
-
-```bash
-rudolph read [options]
-
-Options:
-  -d, --day <day>         Day number (1-25)
-  -y, --year <year>       Year
-  -f, --force             Force re-download
-  -o, --output-dir <dir>  Override output directory
-```
-
-### `rudolph refresh`
-
-Re-download puzzle (useful after solving part 1 to get part 2).
-
-```bash
-rudolph refresh [options]
-
-Options:
-  -d, --day <day>         Day number (1-25)
-  -y, --year <year>       Year
-  -o, --output-dir <dir>  Override output directory
-```
+-  `rudolph init`: interactive bootstrap (.env, output dir/year, session, optional git init, optional install, setup today).
+-  `rudolph setup`: create day folder, runner/test templates, sample stub; fetch input + puzzle. Options: `-d/--day`, `-y/--year`, `-o/--output-dir`, `-f/--force` (warns it overwrites).
+-  `rudolph run sample|input`: run solution against `sample.txt` or `input.txt` with timing. Options: `-d/--day`, `-y/--year`, `-p/--part (default both)`, `-o/--output-dir`.
 
 ## Generated File Structure
 
@@ -146,8 +95,11 @@ aoc/
         ├── day01.test.ts # Test file
         ├── puzzle.md     # Puzzle description
         ├── input.txt     # Your puzzle input
-        └── sample.txt    # Sample input (fill this in)
+        ├── sample.txt    # Sample input (fill this in)
+        └── guesses.ndjson # Guess history (synced with cache)
 ```
+
+Cache layout mirrors guesses in the project: `~/.cache/rudolph/<year>/dayXX/`.
 
 ## Solution Format
 

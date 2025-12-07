@@ -65,6 +65,12 @@ export interface RunnerModule {
 	};
 }
 
+export interface RunResult {
+	p1?: string | number;
+	p2?: string | number;
+	elapsedMs: number;
+}
+
 function isValidRunner(mod: unknown): mod is RunnerModule {
 	if (!mod || typeof mod !== "object") return false;
 	const m = mod as Record<string, unknown>;
@@ -90,12 +96,11 @@ async function importRunner(runnerPath: string): Promise<RunnerModule> {
 	}
 }
 
-export async function runSolution(
+export async function executeRunner(
 	runnerPath: string,
 	inputPath: string,
-	showTiming: boolean,
 	part: "1" | "2" | "both" = "both",
-): Promise<void> {
+): Promise<RunResult> {
 	if (!fileExists(runnerPath)) {
 		throw new RunnerNotFoundError(runnerPath);
 	}
@@ -117,31 +122,34 @@ export async function runSolution(
 
 	const runner = mod.default;
 	const input = loadFile(inputPath);
-
 	const start = performance.now();
-
 	let p1: string | number | undefined;
 	let p2: string | number | undefined;
-
 	if (part === "1" || part === "both") {
 		p1 = runner.p1(input);
 	}
-
 	if (part === "2" || part === "both") {
 		p2 = runner.p2(input);
 	}
-
 	const end = performance.now();
+	return { p1, p2, elapsedMs: end - start };
+}
 
+export async function runSolution(
+	runnerPath: string,
+	inputPath: string,
+	showTiming: boolean,
+	part: "1" | "2" | "both" = "both",
+): Promise<void> {
+	const result = await executeRunner(runnerPath, inputPath, part);
 	if (part === "both") {
-		console.log({ p1, p2 });
+		console.log({ p1: result.p1, p2: result.p2 });
 	} else if (part === "1") {
-		console.log({ p1 });
+		console.log({ p1: result.p1 });
 	} else {
-		console.log({ p2 });
+		console.log({ p2: result.p2 });
 	}
-
 	if (showTiming) {
-		console.log(`\nTime: ${(end - start).toFixed(2)}ms`);
+		console.log(`\nTime: ${result.elapsedMs.toFixed(2)}ms`);
 	}
 }
