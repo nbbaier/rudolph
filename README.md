@@ -64,14 +64,14 @@ rudolph run input
 rudolph answer 2024 1 1
 ```
 
-### Working with multiple days
+### Working with specific days
 
 ```bash
-# Set up multiple days at once
-for day in {1..5}; do rudolph setup -d $day; done
+# Set up a specific day
+rudolph setup 2024 5
 
-# Run all solutions
-for day in {1..5}; do rudolph run input -d $day; done
+# Run a specific day's solution
+rudolph run input 2024 5
 ```
 
 For full command documentation and configuration details, see the [rudolph package README](./packages/rudolph/README.md).

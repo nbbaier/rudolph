@@ -1,4 +1,4 @@
-import { createFromTemplate } from "../utils";
+import { createRunnerFile } from "../utils";
 import { buildDayPaths } from "../utils/cli-helpers";
 import { downloadInput, downloadPuzzle } from "../utils/download";
 import { fileExists, writeFile } from "../utils/runtime";
@@ -20,7 +20,7 @@ export async function setupCommand(
 
 	console.log(`Setting up: ${year} day ${day}`);
 
-	await createFromTemplate("runner", paths.runner);
+	await createRunnerFile(paths.runner);
 	await writeFile(paths.sample, "");
 	await downloadInput(year, day, outputDir);
 	await downloadPuzzle(year, day, outputDir);
