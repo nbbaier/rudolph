@@ -8,16 +8,16 @@ Run the interactive setup wizard:
 
 ```bash
 # Using bun (recommended)
-bunx create-rudolph my-aoc-workspace
+bunx create-rudolph advent-of-code
 
 # Using npm
-npx create-rudolph my-aoc-workspace
+npx create-rudolph advent-of-code
 
 # Using pnpm
-pnpm create rudolph my-aoc-workspace
+pnpm create rudolph advent-of-code
 
 # Using yarn
-yarn create rudolph my-aoc-workspace
+yarn create rudolph advent-of-code
 ```
 
 ## Features
@@ -28,9 +28,9 @@ The `create-rudolph` tool automates the setup process:
 2. **TypeScript Setup**: Configures `tsconfig.json` for modern TypeScript.
 3. **CLI Installation**: Installs `rudolph` as a dependency.
 4. **Environment Config**: Interactive wizard to set your:
-   - AoC Session Cookie
-   - Target Year
-   - User-Agent Email
+   -  AoC Session Cookie
+   -  Target Year
+   -  User-Agent Email
 5. **Git Initialization**: Optionally initializes a git repository.
 6. **First Day Setup**: Optionally scaffolds Day 01 immediately.
 
@@ -39,7 +39,7 @@ The `create-rudolph` tool automates the setup process:
 Once your workspace is ready:
 
 ```bash
-cd my-aoc-workspace
+cd advent-of-code
 
 # Set up today's puzzle (if strictly working on current calendar day)
 rudolph setup
@@ -60,7 +60,7 @@ rudolph answer 2024 1 1
 ## Project Structure
 
 ```
-my-aoc-workspace/
+advent-of-code/
 ├── .env                 # Secrets (AOC_SESSION)
 ├── package.json         # Dependencies
 ├── tsconfig.json        # TS Config
