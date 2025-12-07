@@ -1,16 +1,16 @@
-import pc from "picocolors";
+import chalk from "chalk";
 
-// Color utilities matching @astrojs/cli-kit
+// Color utilities with chalk
 export const color = {
-	cyan: (text: string) => pc.cyan(text),
-	red: (text: string) => pc.red(text),
-	dim: (text: string) => pc.dim(text),
-	reset: (text: string) => pc.reset(text),
-	bold: (text: string) => pc.bold(text),
-	black: (text: string) => pc.black(text),
-	whiteBright: (text: string) => pc.white(text),
-	bgRed: (text: string) => pc.bgRed(text),
-	bgCyan: (text: string) => pc.bgCyan(text),
+	cyan: (text: string) => chalk.cyan(text),
+	red: (text: string) => chalk.red(text),
+	dim: (text: string) => chalk.dim(text),
+	reset: (text: string) => chalk.reset(text),
+	bold: (text: string) => chalk.bold(text),
+	black: (text: string) => chalk.black(text),
+	whiteBright: (text: string) => chalk.whiteBright(text),
+	bgRed: (text: string) => chalk.bgRed(text),
+	bgCyan: (text: string) => chalk.bgCyan(text),
 };
 
 // Label utility matching @astrojs/cli-kit
