@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 import { dependencies } from "./actions/dependencies";
-import { firstDay } from "./actions/first-day";
+
 import { getEmail } from "./actions/get-email";
 import { getSession } from "./actions/get-session";
 import { getYear } from "./actions/get-year";
@@ -12,6 +12,7 @@ import { scaffold } from "./actions/scaffold";
 import { solutions } from "./actions/solutions";
 import { verify } from "./actions/verify";
 import { getContext } from "./context";
+import { runTasks } from "./tasks";
 
 export async function main() {
 	console.log("");
@@ -29,7 +30,6 @@ export async function main() {
 		getEmail,
 		scaffold,
 		dependencies,
-		firstDay,
 		git,
 	];
 
@@ -37,8 +37,7 @@ export async function main() {
 		await step(ctx);
 	}
 
-	// TODO: Execute tasks here (e.g., scaffold, install deps, init git)
-	// await tasks(ctx.tasks);
+	await runTasks(ctx.tasks, { dryRun: ctx.dryRun });
 
 	await next(ctx);
 }

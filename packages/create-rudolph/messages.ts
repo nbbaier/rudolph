@@ -1,4 +1,4 @@
-import { shell } from "./shell";
+import { exec } from "./exec";
 import { color, getRandomFestiveMessage, label, sleep } from "./utils";
 
 const stdout = process.stdout;
@@ -71,10 +71,10 @@ export const nextSteps = async ({
 	await sleep(100);
 	log(`\n${prefix}Run your solutions:`);
 	log(
-		`${prefix}${color.cyan(`${pmPrefix} run input`)}  ${color.dim("# Run on real input")}`,
+		`${prefix}${color.cyan(`${pmPrefix} run:input`)}   ${color.dim("# Run on real input")}`,
 	);
 	log(
-		`${prefix}${color.cyan(`${pmPrefix} run sample`)}  ${color.dim("# Run on sample input")}`,
+		`${prefix}${color.cyan(`${pmPrefix} run:sample`)}  ${color.dim("# Run on sample input")}`,
 	);
 
 	await sleep(100);
@@ -87,13 +87,8 @@ async function getRegistry(packageManager: string): Promise<string> {
 	if (_registry) return _registry;
 	const fallback = "https://registry.npmjs.org";
 	try {
-		const { stdout } = await shell(packageManager, [
-			"config",
-			"get",
-			"registry",
-		]);
+		const stdout = await exec(packageManager, ["config", "get", "registry"]);
 		_registry = stdout?.trim()?.replace(/\/$/, "") || fallback;
-		// Detect cases where the shell command returned a non-URL (e.g. a warning)
 		if (!new URL(_registry).host) _registry = fallback;
 	} catch {
 		_registry = fallback;

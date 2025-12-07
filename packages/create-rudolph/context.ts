@@ -21,7 +21,6 @@ export interface Context {
 	aocSession?: string;
 	aocUserAgent?: string;
 	aocYear?: string;
-	firstDay?: boolean;
 	tasks: Task[];
 	exit(code: number): never;
 }

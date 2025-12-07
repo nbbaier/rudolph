@@ -1,19 +1,5 @@
 import { exec } from "node:child_process";
 
-/**
- * Get the user's git name from git config
- */
-export const getGitName = () =>
-	new Promise<string | undefined>((resolve) => {
-		exec("git config user.name", { encoding: "utf-8" }, (_err, gitName) => {
-			const name = gitName?.trim();
-			resolve(name || undefined);
-		});
-	});
-
-/**
- * Get the user's git email from git config
- */
 export const getGitEmail = () =>
 	new Promise<string | undefined>((resolve) => {
 		exec("git config user.email", { encoding: "utf-8" }, (_err, gitEmail) => {
