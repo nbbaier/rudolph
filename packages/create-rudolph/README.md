@@ -10,20 +10,20 @@ Run the interactive setup wizard:
 
 ```bash
 # Using bun (recommended)
-bun create rudolph@next # defaults to advent-of-code
-bun create rudolph@next my-aoc-project # creates a new project called my-aoc-project
+bun create @nbbaier/rudolph@next # defaults to advent-of-code
+bun create @nbbaier/rudolph@next my-aoc-project # creates a new project called my-aoc-project
 
 # Using npm
-npm create rudolph@next
-npm create rudolph@next my-aoc-project
+npm create @nbbaier/rudolph@next
+npm create @nbbaier/rudolph@next my-aoc-project
 
 # Using pnpm
-pnpm create rudolph@next
-pnpm create rudolph@next my-aoc-project
+pnpm create @nbbaier/rudolph@next
+pnpm create @nbbaier/rudolph@next my-aoc-project
 
 # Using yarn
-yarn create rudolph@next
-yarn create rudolph@next my-aoc-project
+yarn create @nbbaier/rudolph@next
+yarn create @nbbaier/rudolph@next my-aoc-project
 
 ```
 

@@ -1,5 +1,5 @@
 {
-	"name": "create-rudolph",
+	"name": "@nbbaier/create-rudolph",
 	"version": "0.1.0",
 	"description": "Scaffold a new Advent of Code workspace with rudolph CLI (Early Release)",
 	"type": "module",

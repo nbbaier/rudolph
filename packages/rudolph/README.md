@@ -8,16 +8,16 @@ A powerful CLI tool for Advent of Code enthusiasts. Set up, run, submit, and tra
 
 ```bash
 # With bun (recommended)
-bun install -g rudolph@next
+bun install -g @nbbaier/rudolph@next
 
 # With npm
-npm install -g rudolph@next
+npm install -g @nbbaier/rudolph@next
 
 # With pnpm
-pnpm add -g rudolph@next
+pnpm add -g @nbbaier/rudolph@next
 
 # With yarn
-yarn global add rudolph@next
+yarn global add @nbbaier/rudolph@next
 ```
 
 ## Quick Start
@@ -39,7 +39,7 @@ rudolph answer 2024 1 1
 For a guided setup experience, use **[create-rudolph](../create-rudolph)** instead:
 
 ```bash
-bunx create-rudolph@next advent-of-code
+bunx @nbbaier/create-rudolph@next advent-of-code
 cd advent-of-code
 rudolph setup
 ```
