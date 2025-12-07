@@ -14,36 +14,41 @@ This guide consolidates all the project directory logic into `project-name.ts`, 
 
 ---
 
+---
+
 ## Architecture
 
 ### context.ts - Minimal
 
 Only responsibilities:
-- Parse CLI flags using `arg`
-- Store the raw CLI argument (`cliArg`)
-- Store parsed flags
-- Detect package manager
-- That's it
+
+-  Parse CLI flags using `arg`
+-  Store the raw CLI argument (`cliArg`)
+-  Store parsed flags
+-  Detect package manager
+-  That's it
 
 **What NOT to do:**
-- Don't resolve the target directory
-- Don't infer project names
-- Don't check if directories are empty
-- Don't determine if the argument was "explicitly provided"
+
+-  Don't resolve the target directory
+-  Don't infer project names
+-  Don't check if directories are empty
+-  Don't determine if the argument was "explicitly provided"
 
 **Example structure:**
+
 ```typescript
 export interface Context {
-  cliArg?: string;           // Raw arg from CLI (could be ".", "my-project", undefined)
-  packageManager: string;
-  dryRun?: boolean;
-  yes?: boolean;
-  // ... other flags ...
-  projectName?: string;      // Set by project-name.ts
-  cwd?: string;              // Set by project-name.ts
-  // ... rest of config ...
-  tasks: Task[];
-  exit(code: number): never;
+   cliArg?: string; // Raw arg from CLI (could be ".", "my-project", undefined)
+   packageManager: string;
+   dryRun?: boolean;
+   yes?: boolean;
+   // ... other flags ...
+   projectName?: string; // Set by project-name.ts
+   cwd?: string; // Set by project-name.ts
+   // ... rest of config ...
+   tasks: Task[];
+   exit(code: number): never;
 }
 ```
 
@@ -105,18 +110,20 @@ Single responsibility: "Figure out where the project goes and what its name is"
 ### Step 1: Simplify context.ts
 
 Remove:
-- `projectNameExplicitlyProvided` (unnecessary)
-- The resolved `cwd` calculation
-- The normalized project name handling
+
+-  `projectNameExplicitlyProvided` (unnecessary)
+-  The resolved `cwd` calculation
+-  The normalized project name handling
 
 Add:
-- Simple `cliArg?: string` field to store `flags._[0]`
+
+-  Simple `cliArg?: string` field to store `flags._[0]`
 
 ```typescript
 export async function getContext(argv: string[]): Promise<Context> {
   const flags = arg(...);
   const cliArg = flags._[0];  // Could be undefined, ".", "my-project", etc.
-  
+
   const context: Context = {
     cliArg,
     packageManager: detectPackageManager() ?? "npm",
@@ -126,7 +133,7 @@ export async function getContext(argv: string[]): Promise<Context> {
     tasks: [],
     exit(code) { process.exit(code); },
   };
-  
+
   return context;
 }
 ```
@@ -136,94 +143,96 @@ export async function getContext(argv: string[]): Promise<Context> {
 This action now handles all the directory inference and validation logic.
 
 **Function signature:**
+
 ```typescript
 export async function projectName(
-  ctx: Pick<
-    Context,
-    "cliArg" | "yes" | "dryRun" | "exit" | "cwd" | "projectName"
-  >,
+   ctx: Pick<
+      Context,
+      "cliArg" | "yes" | "dryRun" | "exit" | "cwd" | "projectName"
+   >
 ) {
-  // 1. Infer target path
-  // 2. Check if empty
-  // 3. Prompt if needed
-  // 4. Extract project name
-  // 5. Set ctx.cwd and ctx.projectName
+   // 1. Infer target path
+   // 2. Check if empty
+   // 3. Prompt if needed
+   // 4. Extract project name
+   // 5. Set ctx.cwd and ctx.projectName
 }
 ```
 
 **Pseudocode:**
+
 ```typescript
 export async function projectName(ctx) {
-  // Step 1: Infer the target directory
-  let targetPath: string;
-  let isDefaultDir = false;
-  
-  if (!ctx.cliArg) {
-    // No argument: use default
-    targetPath = path.resolve(process.cwd(), "advent-of-code");
-    isDefaultDir = true;
-  } else if (ctx.cliArg === "." || ctx.cliArg === "./") {
-    // Current directory
-    targetPath = process.cwd();
-  } else {
-    // Custom path
-    targetPath = path.resolve(process.cwd(), ctx.cliArg);
-  }
+   // Step 1: Infer the target directory
+   let targetPath: string;
+   let isDefaultDir = false;
 
-  // Step 2: Check if empty
-  const empty = isEmpty(targetPath);
+   if (!ctx.cliArg) {
+      // No argument: use default
+      targetPath = path.resolve(process.cwd(), "advent-of-code");
+      isDefaultDir = true;
+   } else if (ctx.cliArg === "." || ctx.cliArg === "./") {
+      // Current directory
+      targetPath = process.cwd();
+   } else {
+      // Custom path
+      targetPath = path.resolve(process.cwd(), ctx.cliArg);
+   }
 
-  if (!empty) {
-    // Directory is not empty
-    await info("Hmm...", `"${targetPath}" is not empty!`);
+   // Step 2: Check if empty
+   const empty = isEmpty(targetPath);
 
-    if (ctx.yes || isDefaultDir) {
-      // --yes flag: proceed with warning, OR default dir (shouldn't happen)
-      if (!isDefaultDir) {
-        // User explicitly asked for this dir, let them have it
+   if (!empty) {
+      // Directory is not empty
+      await info("Hmm...", `"${targetPath}" is not empty!`);
+
+      if (ctx.yes || isDefaultDir) {
+         // --yes flag: proceed with warning, OR default dir (shouldn't happen)
+         if (!isDefaultDir) {
+            // User explicitly asked for this dir, let them have it
+         }
+      } else {
+         // Interactive mode: prompt for alternative
+         const alt = await text({
+            message: "Where should we create your project?",
+            placeholder: "advent-of-code",
+            initialValue: "advent-of-code",
+            validate(value: string) {
+               if (!isEmpty(value)) {
+                  return "Directory is not empty!";
+               }
+               return undefined;
+            },
+         });
+         if (isCancel(alt)) ctx.exit(1);
+         targetPath = path.resolve(process.cwd(), alt.trim());
       }
-    } else {
-      // Interactive mode: prompt for alternative
-      const alt = await text({
-        message: "Where should we create your project?",
-        placeholder: "advent-of-code",
-        initialValue: "advent-of-code",
-        validate(value: string) {
-          if (!isEmpty(value)) {
-            return "Directory is not empty!";
-          }
-          return undefined;
-        },
-      });
-      if (isCancel(alt)) ctx.exit(1);
-      targetPath = path.resolve(process.cwd(), alt.trim());
-    }
-  } else {
-    // Directory is empty
-    if (!isDefaultDir) {
-      await info("dir", `Using ${targetPath} as project directory`);
-    }
-  }
+   } else {
+      // Directory is empty
+      if (!isDefaultDir) {
+         await info("dir", `Using ${targetPath} as project directory`);
+      }
+   }
 
-  // Step 3: Extract project name
-  let projectName: string;
-  if (ctx.cliArg === "." || ctx.cliArg === "./") {
-    // Current directory: use its basename
-    const parts = process.cwd().split(path.sep);
-    projectName = parts[parts.length - 1] ?? "";
-  } else {
-    // Use the resolved path's basename
-    projectName = path.basename(targetPath);
-  }
-  projectName = toValidName(projectName);
+   // Step 3: Extract project name
+   let projectName: string;
+   if (ctx.cliArg === "." || ctx.cliArg === "./") {
+      // Current directory: use its basename
+      const parts = process.cwd().split(path.sep);
+      projectName = parts[parts.length - 1] ?? "";
+   } else {
+      // Use the resolved path's basename
+      projectName = path.basename(targetPath);
+   }
+   projectName = toValidName(projectName);
 
-  // Step 4: Store in context
-  ctx.cwd = targetPath;
-  ctx.projectName = projectName;
+   // Step 4: Store in context
+   ctx.cwd = targetPath;
+   ctx.projectName = projectName;
 
-  if (!ctx.cwd || !ctx.projectName) {
-    ctx.exit(1);
-  }
+   if (!ctx.cwd || !ctx.projectName) {
+      ctx.exit(1);
+   }
 }
 ```
 
@@ -231,13 +240,13 @@ export async function projectName(ctx) {
 
 ## Why This Is Better
 
-| Aspect | Before | After |
-|--------|--------|-------|
-| **Lines of logic per file** | Spread across context.ts + project-name.ts | All in project-name.ts |
-| **Extra context fields** | `projectNameExplicitlyProvided` | Just `cliArg` |
-| **Path resolution** | Happens in context.ts | Happens in project-name.ts |
-| **Directory check** | Multiple conditional branches | Single linear flow |
-| **Test scope** | Need to test context + action separately | Test action handles all cases |
+| Aspect                      | Before                                     | After                         |
+| --------------------------- | ------------------------------------------ | ----------------------------- |
+| **Lines of logic per file** | Spread across context.ts + project-name.ts | All in project-name.ts        |
+| **Extra context fields**    | `projectNameExplicitlyProvided`            | Just `cliArg`                 |
+| **Path resolution**         | Happens in context.ts                      | Happens in project-name.ts    |
+| **Directory check**         | Multiple conditional branches              | Single linear flow            |
+| **Test scope**              | Need to test context + action separately   | Test action handles all cases |
 
 ---
 
