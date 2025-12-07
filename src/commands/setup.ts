@@ -1,7 +1,7 @@
 import { createRunnerFile } from "../utils";
 import { buildDayPaths } from "../utils/cli-helpers";
 import { downloadInput, downloadPuzzle } from "../utils/download";
-import { fileExists, writeFile } from "../utils/runtime";
+import { ensureDirectory, fileExists, writeFile } from "../utils/runtime";
 
 export async function setupCommand(
 	year: string,
@@ -20,6 +20,7 @@ export async function setupCommand(
 
 	console.log(`Setting up: ${year} day ${day}`);
 
+	await ensureDirectory(paths.runner);
 	await createRunnerFile(paths.runner);
 	await writeFile(paths.sample, "");
 	await downloadInput(year, day, outputDir);

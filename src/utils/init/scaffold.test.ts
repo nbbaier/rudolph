@@ -66,6 +66,10 @@ describe("scaffoldProject", () => {
 		expect(pkg.scripts.setup).toBe("rudolph setup");
 		expect(pkg.scripts["run:input"]).toBe("rudolph run input");
 		expect(pkg.scripts["run:sample"]).toBe("rudolph run sample");
+		expect(pkg.devDependencies.typescript).toBeDefined();
+		expect(pkg.devDependencies["@types/node"]).toBeDefined();
+		expect(pkg.devDependencies["@types/bun"]).toBeUndefined();
+		expect(pkg.packageManager).toContain("npm@");
 	});
 
 	test("generates .env with correct values", async () => {
@@ -102,6 +106,11 @@ describe("scaffoldProject", () => {
 		expect(readme).toContain("Advent of Code 2024");
 		expect(readme).toContain("bun install");
 		expect(readme).toContain("bun run setup");
+		const pkg = JSON.parse(
+			fs.readFileSync(path.join(tempDir, "package.json"), "utf-8"),
+		);
+		expect(pkg.devDependencies["@types/bun"]).toBeDefined();
+		expect(pkg.packageManager).toContain("bun@");
 	});
 
 	test("creates .gitignore with standard entries", async () => {

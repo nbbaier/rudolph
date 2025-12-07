@@ -23,7 +23,7 @@ A powerful CLI tool for Advent of Code enthusiasts. Set up, run, submit, and tra
 The easiest way to get started is to initialize a new workspace:
 
 ```bash
-# Create a new directory and initialize
+# Create a new directory and **initialize**
 mkdir advent-of-code && cd advent-of-code
 npx @nbbaier/rudolph init
 

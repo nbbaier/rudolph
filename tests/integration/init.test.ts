@@ -52,6 +52,10 @@ describe("init integration tests", () => {
 				fs.readFileSync(path.join(tempDir, "package.json"), "utf-8"),
 			);
 			expect(pkg.dependencies["@nbbaier/rudolph"]).toBeDefined();
+			expect(pkg.devDependencies.typescript).toBeDefined();
+			expect(pkg.devDependencies["@types/node"]).toBeDefined();
+			expect(pkg.devDependencies["@types/bun"]).toBeUndefined();
+			expect(pkg.packageManager).toContain("npm@");
 		});
 
 		test("works with different package managers", async () => {
@@ -71,6 +75,15 @@ describe("init integration tests", () => {
 
 				const readme = fs.readFileSync(path.join(pmDir, "README.md"), "utf-8");
 				expect(readme).toContain(`${pm} install`);
+				const pkg = JSON.parse(
+					fs.readFileSync(path.join(pmDir, "package.json"), "utf-8"),
+				);
+				expect(pkg.packageManager).toContain(`${pm}@`);
+				if (pm === "bun") {
+					expect(pkg.devDependencies["@types/bun"]).toBeDefined();
+				} else {
+					expect(pkg.devDependencies["@types/bun"]).toBeUndefined();
+				}
 			}
 		});
 	});

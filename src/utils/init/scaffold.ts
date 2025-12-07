@@ -59,7 +59,22 @@ function generateEnvFile(config: {
 	return `${lines.join("\n")}\n`;
 }
 
-function generatePackageJson(name: string, version: string) {
+function packageManagerSpec(pm: string): string {
+	const agent = process.env.npm_config_user_agent ?? "";
+	const match = agent.match(new RegExp(`${pm}/([\\d\\.]+)`));
+	const version = match?.[1] ?? "latest";
+	return `${pm}@${version}`;
+}
+
+function generatePackageJson(name: string, version: string, pm: string) {
+	const devDeps: Record<string, string> = {
+		typescript: "^5.9.3",
+		"@types/node": "^22.9.0",
+	};
+	if (pm === "bun") {
+		devDeps["@types/bun"] = "^1.3.3";
+	}
+
 	const pkg = {
 		name: toValidName(name),
 		private: true,
@@ -73,6 +88,8 @@ function generatePackageJson(name: string, version: string) {
 		dependencies: {
 			"@nbbaier/rudolph": `^${version}`,
 		},
+		devDependencies: devDeps,
+		packageManager: packageManagerSpec(pm),
 	};
 	return `${JSON.stringify(pkg, null, 2)}\n`;
 }
@@ -125,7 +142,11 @@ export async function scaffoldProject(ctx: ScaffoldContext) {
 		ctx.packageManager,
 		"@nbbaier/rudolph",
 	);
-	const packageJson = generatePackageJson(ctx.projectName, rudolphVersion);
+	const packageJson = generatePackageJson(
+		ctx.projectName,
+		rudolphVersion,
+		ctx.packageManager,
+	);
 
 	const envFile = generateEnvFile({
 		AOC_SESSION: ctx.aocSession,
