@@ -1,5 +1,3 @@
-import { exec } from "node:child_process";
-import { stripVTControlCharacters } from "node:util";
 import { shell } from "./shell";
 import { align, color, label, sleep } from "./utils";
 
@@ -20,21 +18,6 @@ export const info = async (prefix: string, text: string) => {
 		);
 	}
 };
-
-export const getName = () =>
-	new Promise<string>((resolve) => {
-		exec("git config user.name", { encoding: "utf-8" }, (_1, gitName) => {
-			if (gitName?.trim()) {
-				return resolve(gitName?.split(" ")[0]?.trim() ?? "");
-			}
-			exec("whoami", { encoding: "utf-8" }, (_3, whoami) => {
-				if (whoami?.trim()) {
-					return resolve(whoami?.split(" ")[0]?.trim() ?? "");
-				}
-				return resolve("astronaut");
-			});
-		});
-	});
 
 export const banner = () => {
 	log(
@@ -57,49 +40,6 @@ export const bannerAbort = () =>
 	log(
 		`\n${label("rudolph", color.bgRed, color.whiteBright)}  🎄 No Rudolph to guide the sleigh!`,
 	);
-
-export const nextSteps = async ({
-	projectDir,
-	devCmd,
-}: {
-	projectDir: string;
-	devCmd: string;
-}) => {
-	const max = stdout.columns;
-	const prefix = max < 80 ? " " : " ".repeat(9);
-	await sleep(200);
-	log(
-		`\n ${color.bgCyan(` ${color.black("next")} `)}  ${color.bold(
-			"Liftoff confirmed. Explore your project!",
-		)}`,
-	);
-
-	await sleep(100);
-	if (projectDir !== "") {
-		projectDir = projectDir.includes(" ")
-			? `"./${projectDir}"`
-			: `./${projectDir}`;
-		const enter = [
-			`\n${prefix}Enter your project directory using`,
-			color.cyan(`cd ${projectDir}`),
-		];
-		const len =
-			(enter[0]?.length ?? 0) + stripVTControlCharacters(enter[1] ?? "").length;
-		log(enter.join(len > max ? `\n${prefix}` : enter[1] ? ` ${prefix}` : ""));
-	}
-	log(
-		`${prefix}Run ${color.cyan(devCmd)} to start the dev server. ${color.cyan("CTRL+C")} to stop.`,
-	);
-	await sleep(100);
-	log(
-		`${prefix}Add frameworks like ${color.cyan(`react`)} or ${color.cyan(
-			"tailwind",
-		)} using ${color.cyan("astro add")}.`,
-	);
-	await sleep(100);
-	log(`\n${prefix}Stuck? Join us at ${color.cyan(`https://astro.build/chat`)}`);
-	await sleep(200);
-};
 
 let _registry: string;
 async function getRegistry(packageManager: string): Promise<string> {
