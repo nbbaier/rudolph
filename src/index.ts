@@ -1,7 +1,7 @@
 import { createRequire } from "node:module";
 import { Command } from "commander";
 import { answerCommand } from "./commands/answer";
-import { attemptCommand } from "./commands/attempt";
+// import { attemptCommand } from "./commands/attempt";
 import { guessesCommand } from "./commands/guesses";
 import { initCommand } from "./commands/init";
 import { inputCommand } from "./commands/input";
@@ -118,19 +118,6 @@ program
 			);
 		},
 	);
-
-withDayYearOptions(
-	program
-		.command("attempt")
-		.description(
-			"Run solution against input.txt, executing both parts and showing total time",
-		)
-		.option("-p, --part [part]", "Which part to run (1, 2, or both)", "both"),
-).action(async (options: DayYearOptions) => {
-	const day = daySchema.parse(options.day);
-	const year = yearSchema.parse(options.year);
-	await attemptCommand(year, day, options.outputDir, options.part);
-});
 
 withDayYearOptions(
 	program

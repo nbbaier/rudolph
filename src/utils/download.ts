@@ -9,7 +9,7 @@ import remarkStringify from "remark-stringify";
 import remarkUnlink from "remark-unlink";
 import { unified } from "unified";
 import { stringify as stringifyYaml } from "yaml";
-import { getSession } from "../env";
+import { getAoCHeaders, getSession } from "../env";
 import {
 	DownloadError,
 	InvalidSessionError,
@@ -30,7 +30,7 @@ async function fetchAoCResource(
 
 	const url = `https://adventofcode.com/${year}/day/${Number(day)}${endpoint}`;
 	const res = await fetch(url, {
-		headers: { Cookie: `session=${session}` },
+		headers: getAoCHeaders(),
 	});
 
 	const text = await res.text();

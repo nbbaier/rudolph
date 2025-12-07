@@ -1,4 +1,4 @@
-import { getSession } from "../env";
+import { getAoCHeaders, getSession } from "../env";
 import { InvalidSessionError, MissingSessionError } from "../errors";
 import { type GuessEntry, recordGuess, type SubmissionStatus } from "./guesses";
 
@@ -66,7 +66,7 @@ export async function submitAnswer(
 	const res = await fetch(url, {
 		method: "POST",
 		headers: {
-			Cookie: `session=${session}`,
+			...getAoCHeaders(),
 			"Content-Type": "application/x-www-form-urlencoded",
 		},
 		body,

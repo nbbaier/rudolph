@@ -44,3 +44,34 @@ export function getSession(): string | undefined {
 export function getOutputDir(): string {
 	return process.env.OUTPUT_DIR ?? DEFAULT_OUTPUT_DIR;
 }
+
+const PACKAGE_VERSION = "1.0.0";
+const PACKAGE_REPO = "https://github.com/nbbaier/rudolph";
+
+function isValidEmail(value: string): boolean {
+	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+export function getUserAgent(): string {
+	const userAgent = process.env.AOC_USER_AGENT;
+	if (userAgent && isValidEmail(userAgent)) {
+		return `rudolph/${PACKAGE_VERSION} (${userAgent})`;
+	}
+	if (userAgent && !isValidEmail(userAgent)) {
+		console.warn(
+			"Warning: AOC_USER_AGENT should be an email address for AoC compliance.",
+		);
+	}
+	return `rudolph/${PACKAGE_VERSION} (+${PACKAGE_REPO})`;
+}
+
+export function getAoCHeaders(): Record<string, string> {
+	const session = getSession();
+	const headers: Record<string, string> = {
+		"User-Agent": getUserAgent(),
+	};
+	if (session) {
+		headers.Cookie = `session=${session}`;
+	}
+	return headers;
+}
