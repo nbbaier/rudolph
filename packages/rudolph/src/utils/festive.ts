@@ -1,8 +1,8 @@
-import pc from "picocolors";
+import chalk from "chalk";
 
 export const RUDOLPH_BANNER = `
-${pc.red("    🦌 RUDOLPH")}
-${pc.green("    Ready to guide your sleigh through the Advent of Code?")}
+${chalk.red("    🦌 RUDOLPH")}
+${chalk.green("    Ready to guide your sleigh through the Advent of Code?")}
 `;
 
 const FESTIVE_MESSAGES = [
@@ -26,20 +26,21 @@ export function printNextSteps(outputDir: string, day?: string): void {
 	const dayNum = day ?? "1";
 
 	console.log();
-	console.log(pc.green("  🎄 Your workshop is ready!"));
+	console.log(chalk.green("  🎄 Your workshop is ready!"));
 	console.log();
-	console.log(pc.white("  Next steps:"));
+	console.log(chalk.white("  Next steps:"));
 	if (cdCmd) {
-		console.log(pc.gray(`  ├─ ${cdCmd}`));
+		console.log(chalk.gray(`  ├─ ${cdCmd}`));
 	}
 	console.log(
-		pc.gray(`  ${cdCmd ? "├" : "├"}─ rudolph setup ${dayNum}`) +
-			pc.dim("    # Unwrap a puzzle"),
+		chalk.gray(`  ${cdCmd ? "├" : "├"}─ rudolph setup ${dayNum}`) +
+			chalk.dim("    # Unwrap a puzzle"),
 	);
 	console.log(
-		pc.gray(`  └─ rudolph run ${dayNum}`) + pc.dim("      # Run your solution"),
+		chalk.gray(`  └─ rudolph run ${dayNum}`) +
+			chalk.dim("      # Run your solution"),
 	);
 	console.log();
-	console.log(pc.yellow(`  ${getRandomFestiveMessage()}`));
+	console.log(chalk.yellow(`  ${getRandomFestiveMessage()}`));
 	console.log();
 }
