@@ -6,10 +6,22 @@
 
 A powerful CLI tool for Advent of Code enthusiasts. Set up, run, submit, and track your AoC solutions with ease.
 
-## Installation
+## Quick Start
+
+The easiest way to get started is to use **[create-rudolph](./packages/create-rudolph)** to scaffold a new workspace:
 
 ```bash
-# With bun (recommended for best performance)
+bunx create-rudolph advent-of-code
+cd advent-of-code
+rudolph setup
+```
+
+## Installation
+
+If you're setting up manually in an existing project:
+
+```bash
+# With bun (recommended)
 bun install -g rudolph
 
 # With npm
@@ -22,146 +34,38 @@ pnpm add -g rudolph
 yarn global add rudolph
 ```
 
-### Runtime Requirements
+For full command documentation and configuration details, see the [rudolph package README](./packages/rudolph/README.md).
 
--  **Bun**: Full support out of the box (recommended)
--  **Node.js 18+**: Requires `tsx` for running TypeScript solutions. Install globally or in your project:
-   ```bash
-   npm install -g tsx
-   ```
+## Packages
 
-## Quick Start
+This is a monorepo containing:
 
-```bash
-# Create a new AoC workspace (recommended)
-bunx create-rudolph my-aoc-workspace
-# or with npx
-npx create-rudolph my-aoc-workspace
-
-# Then navigate to your workspace
-cd my-aoc-workspace
-
-# Set up today's puzzle
-rudolph setup
-
-# Or set up a specific day
-rudolph setup 2024 1
-```
-
-Alternatively, you can manually set up in an existing project:
-
-```bash
-# Install rudolph globally or in your project
-bun install -g rudolph
-
-# Create .env file with your session cookie
-echo "AOC_SESSION=your-session-cookie" > .env
-
-# Set up today's puzzle
-rudolph setup
-```
-
-## Configuration
-
-Create a `.env` file in your project root:
-
-```
-AOC_SESSION=your-session-cookie
-OUTPUT_DIR=./aoc
-AOC_YEAR=2024
-```
-
-| Variable         | Description                                        | Default                                    |
-| ---------------- | -------------------------------------------------- | ------------------------------------------ |
-| `AOC_SESSION`    | Your AoC session cookie (required for downloading) | -                                          |
-| `AOC_USER_AGENT` | Your email for AoC User-Agent (recommended)        | -                                          |
-| `OUTPUT_DIR`     | Where to scaffold puzzle files                     | `./aoc`                                    |
-| `AOC_YEAR`       | Default year for puzzles                           | Current year (or previous year before Dec) |
-
-To get your session cookie:
-
-1. Log in to [adventofcode.com](https://adventofcode.com)
-2. Open browser dev tools → Application → Cookies
-3. Copy the `session` cookie value
-
-### User-Agent (Recommended)
-
-Eric Wastl (AoC creator) requests that automated tools include contact info so he can reach you if traffic is problematic. Set your email in `AOC_USER_AGENT`:
-
-```bash
-export AOC_USER_AGENT="you@example.com"
-```
-
-This sends requests with: `rudolph/1.0.0 (you@example.com)`. If not set, requests use: `rudolph/1.0.0 (+https://github.com/nbbaier/rudolph)`.
-
-## Commands
-
-### Setup & Initialization
-
--  `rudolph setup [year] [day]` - Create day folder, generate solution templates, fetch input and puzzle. Options: `-f/--force` (warns if overwriting)
-
-### Fetch Data
-
--  `rudolph input [year] [day]` - Download puzzle input to `input.txt` (cached). Options: `-f/--force`
--  `rudolph puzzle [year] [day]` - Download puzzle description to `puzzle.md` and print to stdout. Options: `-f/--force`, `--no-print`
--  `rudolph refresh [year] [day]` - Re-download puzzle for part 2 (blocks unless part 1 is recorded complete). Options: `-f/--force`
-
-### Run Solutions
-
--  `rudolph run <target> [options]` - Run solution against `sample` or `input` with timing. Options: `-d/--day`, `-y/--year`, `-p/--part` (1, 2, or both)
-
-### Submit & Track
-
--  `rudolph answer <year> <day> <part>` - Run solution, submit to AoC with guardrails (duplicate/too-high/too-low/locked/cooldown), and log guesses. Options: `--no-refresh` to skip auto-refresh after correct part 1
--  `rudolph guesses [year] [day]` - Display guess history for a day. Options: `--json`
--  `rudolph stars [options]` - Show stars for a year using recorded guesses. Options: `-y/--year`, `--json`
-
-## Generated File Structure
-
-```
-aoc/
-└── 2024/
-    └── day01/
-        ├── index.ts      # Solution file
-        ├── puzzle.md     # Puzzle description
-        ├── input.txt     # Your puzzle input
-        ├── sample.txt    # Sample input (fill this in)
-        └── guesses.ndjson # Guess history (synced with cache)
-```
-
-Guess history is cached locally at `~/.cache/rudolph/<year>/dayXX/` and synced with the project folder.
-
-## Solution Format
-
-Your `index.ts` should export a default object with `p1` and `p2` functions:
-
-```typescript
-function part1(input: string): number | string {
-   return 0;
-}
-
-function part2(input: string): number | string {
-   return 0;
-}
-
-export default { p1: part1, p2: part2 };
-```
+-  **[rudolph](./packages/rudolph)** - The main CLI tool for managing AoC solutions
+-  **[create-rudolph](./packages/create-rudolph)** - Interactive scaffolding tool for new workspaces
 
 ## Development
 
 ```bash
-# Build the project
-npm run build
+# Install dependencies
+bun install
 
-# Run in dev mode
-npm run dev
+# Build all packages
+bun run build
 
-# Lint and format
-npm run lint:fix
-npm run format:fix
+# Run rudolph CLI in dev mode
+bun run dev
 
-# Type check
-npm run typecheck
+# Run linting
+bun run lint
+
+# Fix linting issues
+bun run lint:fix
+
+# Format code
+bun run format:fix
+
+# Type check all packages
+bun run typecheck
 ```
 
 ## License

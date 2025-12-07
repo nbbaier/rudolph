@@ -30,17 +30,15 @@ export function getDefaultYear(): string {
 }
 
 export interface DayYearOptions {
-	day: string;
-	year: string;
 	outputDir?: string;
 	force?: boolean;
 	part?: "1" | "2" | "both";
 }
 
-export function withDayYearOptions(cmd: Command): Command {
+export function withDayYearArguments(cmd: Command): Command {
 	return cmd
-		.option("-d, --day <day>", "Day number (1-25)", getDefaultDay())
-		.option("-y, --year <year>", "Year (e.g., 2024)", getDefaultYear())
+		.argument("[year]", "Year (e.g., 2024)", getDefaultYear())
+		.argument("[day]", "Day number (1-25)", getDefaultDay())
 		.option("-o, --output-dir <dir>", "Output directory for generated files");
 }
 
