@@ -2,7 +2,7 @@ import path from "node:path";
 import { isCancel, text } from "@clack/prompts";
 import type { Context } from "../context";
 import { info } from "../messages";
-import { isEmpty, toValidName } from "../shared";
+import { isEmpty } from "../shared";
 
 export async function solutions(
 	ctx: Pick<
@@ -19,7 +19,10 @@ export async function solutions(
 	if (ctx.yes && ctx.projectName) {
 		ctx.solutionsDir = "solutions";
 		ctx.solutionsPath = path.resolve(ctx.projectName, ctx.solutionsDir);
-		await info("dir", `Solutions will live in ./${ctx.projectName}/${ctx.solutionsDir}`);
+		await info(
+			"dir",
+			`Solutions will live in ./${ctx.projectName}/${ctx.solutionsDir}`,
+		);
 		return;
 	}
 
@@ -33,6 +36,7 @@ export async function solutions(
 			}
 			if (value.match(/[^\x20-\x7E]/g) !== null)
 				return `Invalid non-printable character present!`;
+			return undefined;
 		},
 	});
 
@@ -45,7 +49,7 @@ export async function solutions(
 		ctx.exit(1);
 	}
 
-	ctx.solutionsDir = (name as string)?.trim() ?? "solutions";
+	ctx.solutionsDir = typeof name === "string" ? name.trim() : "solutions";
 	ctx.solutionsPath = path.resolve(projectName, ctx.solutionsDir);
 
 	if (ctx.dryRun) {

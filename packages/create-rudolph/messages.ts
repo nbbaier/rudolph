@@ -5,8 +5,6 @@ const stdout = process.stdout;
 
 export const log = (message: string) => stdout.write(`${message}\n`);
 
-
-
 export const info = async (prefix: string, text: string) => {
 	await sleep(100);
 	if (stdout.columns < 80) {
@@ -72,8 +70,12 @@ export const nextSteps = async ({
 
 	await sleep(100);
 	log(`\n${prefix}Run your solutions:`);
-	log(`${prefix}${color.cyan(`${pmPrefix} run input`)}  ${color.dim("# Run on real input")}`);
-	log(`${prefix}${color.cyan(`rudolph run sample`)}  ${color.dim("# Run on sample input")}`);
+	log(
+		`${prefix}${color.cyan(`${pmPrefix} run input`)}  ${color.dim("# Run on real input")}`,
+	);
+	log(
+		`${prefix}${color.cyan(`${pmPrefix} run sample`)}  ${color.dim("# Run on sample input")}`,
+	);
 
 	await sleep(100);
 	log(`\n${prefix}${color.cyan(getRandomFestiveMessage())}`);

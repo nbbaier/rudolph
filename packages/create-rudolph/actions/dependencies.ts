@@ -13,7 +13,7 @@ export async function dependencies(
 	>,
 ) {
 	let deps: boolean | symbol = ctx.install ?? ctx.yes ?? false;
-	if (deps === undefined || deps === false) {
+	if (deps === false) {
 		deps = await confirm({
 			message: "Install dependencies?",
 			initialValue: true,
@@ -38,7 +38,7 @@ export async function dependencies(
 				error(
 					"error",
 					`Dependencies failed to install, please run ${color.bold(
-						ctx.packageManager + " install",
+						`${ctx.packageManager} install`,
 					)} to install them manually after setup.`,
 				);
 			},

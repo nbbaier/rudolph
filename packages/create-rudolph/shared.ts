@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import { info, log } from "./messages";
 import { shell } from "./shell";
 
 // Some existing files and directories can be safely ignored when checking if a directory is a valid project directory.

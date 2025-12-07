@@ -3,7 +3,9 @@
 	"version": "1.0.0",
 	"private": true,
 	"description": "Advent of Code CLI - monorepo containing rudolph CLI and create-rudolph scaffolding tool",
-	"workspaces": ["packages/*"],
+	"workspaces": [
+		"packages/*"
+	],
 	"scripts": {
 		"build": "bun run --filter '*' build",
 		"dev": "bun run --filter rudolph dev",
