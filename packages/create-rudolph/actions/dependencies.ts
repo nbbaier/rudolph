@@ -2,8 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { confirm, isCancel } from "@clack/prompts";
 import type { Context } from "../context";
+import { exec } from "../exec";
 import { error, info } from "../messages";
-import { shell } from "../shell";
 import { color } from "../utils";
 
 export async function dependencies(
@@ -61,11 +61,7 @@ async function install({
 	cwd: string;
 }) {
 	if (packageManager === "yarn") await ensureYarnLock({ cwd });
-	return shell(packageManager, ["install"], {
-		cwd,
-		timeout: 90_000,
-		stdio: "ignore",
-	});
+	return exec(packageManager, ["install"], { cwd, timeout: 90_000 });
 }
 
 /**

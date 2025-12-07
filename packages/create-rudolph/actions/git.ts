@@ -2,8 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { confirm, isCancel } from "@clack/prompts";
 import type { Context } from "../context";
+import { exec } from "../exec";
 import { error, info } from "../messages";
-import { shell } from "../shell";
 import { color } from "../utils";
 
 export async function git(
@@ -39,11 +39,10 @@ export async function git(
 			pending: "Git",
 			start: "Git initializing...",
 			end: "Git initialized",
-			while: () =>
-				init({ cwd: ctx.cwd }).catch((e) => {
-					error("error", e);
-					process.exit(1);
-				}),
+			while: () => init({ cwd: ctx.cwd }),
+			onError: (e) => {
+				error("error", String(e));
+			},
 		});
 	} else {
 		await info(
@@ -54,12 +53,9 @@ export async function git(
 }
 
 async function init({ cwd }: { cwd: string }) {
-	try {
-		await shell("git", ["init"], { cwd, stdio: "ignore" });
-		await shell("git", ["add", "-A"], { cwd, stdio: "ignore" });
-		await shell("git", ["commit", "-m", "Initial commit from create-rudolph"], {
-			cwd,
-			stdio: "ignore",
-		});
-	} catch {}
+	await exec("git", ["init"], { cwd });
+	await exec("git", ["add", "-A"], { cwd });
+	await exec("git", ["commit", "-m", "Initial commit from create-rudolph"], {
+		cwd,
+	});
 }
