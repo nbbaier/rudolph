@@ -36,7 +36,9 @@
 		"arg": "^5.0.2"
 	},
 	"devDependencies": {
-		"@types/bun": "latest"
+		"@types/bun": "latest",
+		"@types/node": "^22.9.0",
+		"typescript": "^5.9.3"
 	},
 	"peerDependencies": {
 		"typescript": "^5"
