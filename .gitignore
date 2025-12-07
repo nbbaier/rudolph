@@ -71,6 +71,10 @@ web_modules/
 
 .npm
 
+# Optional npm lockfile (using bun.lock instead)
+
+package-lock.json
+
 # Optional eslint cache
 
 .eslintcache

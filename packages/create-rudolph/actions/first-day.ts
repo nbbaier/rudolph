@@ -11,7 +11,7 @@ export async function firstDay(
 		return;
 	}
 	let _firstDay: boolean | symbol = ctx.firstDay ?? ctx.yes ?? false;
-	if (_firstDay === undefined || _firstDay === false) {
+	if (_firstDay === false) {
 		_firstDay = await confirm({
 			message: "Scaffold Day 1 to get started immediately?",
 			initialValue: true,
@@ -23,10 +23,7 @@ export async function firstDay(
 	}
 
 	if (!_firstDay) {
-		await info(
-			"Skipped",
-			`Run 'rudolph setup' whenever you're ready to start`,
-		);
+		await info("Skipped", `Run 'rudolph setup' whenever you're ready to start`);
 		return;
 	}
 }

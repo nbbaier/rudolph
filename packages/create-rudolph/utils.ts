@@ -1,17 +1,17 @@
-import chalk from "chalk";
+import pc from "picocolors";
 
-// Color utilities with chalk
+// Color utilities with picocolors
 export const color = {
-	cyan: (text: string) => chalk.cyan(text),
-	red: (text: string) => chalk.red(text),
-	dim: (text: string) => chalk.dim(text),
-	reset: (text: string) => chalk.reset(text),
-	bold: (text: string) => chalk.bold(text),
-	black: (text: string) => chalk.black(text),
-	whiteBright: (text: string) => chalk.whiteBright(text),
-	bgRed: (text: string) => chalk.bgRed(text),
-	bgCyan: (text: string) => chalk.bgCyan(text),
-	bgGreen: (text: string) => chalk.bgGreen(text),
+	cyan: (text: string) => pc.cyan(text),
+	red: (text: string) => pc.red(text),
+	dim: (text: string) => pc.dim(text),
+	reset: (text: string) => pc.reset(text),
+	bold: (text: string) => pc.bold(text),
+	black: (text: string) => pc.black(text),
+	whiteBright: (text: string) => pc.whiteBright(text),
+	bgRed: (text: string) => pc.bgRed(text),
+	bgCyan: (text: string) => pc.bgCyan(text),
+	bgGreen: (text: string) => pc.bgGreen(text),
 };
 
 // Label utility matching @astrojs/cli-kit
@@ -28,6 +28,7 @@ export function label(
 
 // Strip ANSI escape codes for accurate length calculation
 function stripAnsi(text: string): string {
+	// biome-ignore lint/suspicious/noControlCharactersInRegex: ANSI escape code regex requires control character
 	return text.replace(/\x1B\[[0-9;]*m/g, "");
 }
 
@@ -58,7 +59,11 @@ export const sleep = (ms: number) =>
 
 // Random utility matching @astrojs/cli-kit
 export function random<T>(arr: T[]): T {
-	return arr[Math.floor(Math.random() * arr.length)] as T;
+	if (arr.length === 0) {
+		throw new Error("Cannot select a random element from an empty array.");
+	}
+	// biome-ignore lint/style/noNonNullAssertion: Array access is safe after length check
+	return arr[Math.floor(Math.random() * arr.length)]!;
 }
 
 // Festive messages for the end of setup

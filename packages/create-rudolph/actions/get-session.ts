@@ -38,7 +38,7 @@ export async function getSession(
 		ctx.exit(1);
 	}
 
-	ctx.aocSession = (session as string)?.trim() ?? "";
+	ctx.aocSession = typeof session === "string" ? session.trim() : "";
 
 	if (ctx.dryRun) {
 		await info("--dry-run", "Skipping session storage");

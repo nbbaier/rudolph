@@ -21,7 +21,9 @@ export async function getYear(
 	}
 
 	ctx.aocYear =
-		(year as string)?.trim() || new Date().getFullYear().toString();
+		typeof year === "string"
+			? year.trim()
+			: new Date().getFullYear().toString();
 	if (ctx.dryRun) {
 		await info("--dry-run", "Skipping year selection");
 		return;

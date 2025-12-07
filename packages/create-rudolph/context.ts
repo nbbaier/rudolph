@@ -47,7 +47,7 @@ export async function getContext(argv: string[]): Promise<Context> {
 	);
 
 	const packageManager = detectPackageManager() ?? "npm";
-	const cwd = flags["_"][0];
+	const cwd = flags._[0];
 	let {
 		"--no": no,
 		"--yes": yes,

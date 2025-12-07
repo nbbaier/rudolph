@@ -6,7 +6,10 @@ import { isEmpty, toValidName } from "../shared";
 import { color } from "../utils";
 
 export async function projectName(
-	ctx: Pick<Context, "yes" | "dryRun" | "projectName" | "exit" | "tasks" | "cwd">,
+	ctx: Pick<
+		Context,
+		"yes" | "dryRun" | "projectName" | "exit" | "tasks" | "cwd"
+	>,
 ) {
 	await checkCwd(ctx.cwd);
 
@@ -36,6 +39,7 @@ export async function projectName(
 				// Check for non-printable characters
 				if (value.match(/[^\x20-\x7E]/g) !== null)
 					return `Invalid non-printable character present!`;
+				return undefined;
 			},
 		});
 
@@ -43,8 +47,9 @@ export async function projectName(
 			ctx.exit(1);
 		}
 
-		ctx.cwd = (name as string)?.trim() ?? "";
-		ctx.projectName = toValidName((name as string)?.trim() ?? "");
+		const trimmedName = typeof name === "string" ? name.trim() : "";
+		ctx.cwd = trimmedName;
+		ctx.projectName = toValidName(trimmedName);
 		if (ctx.dryRun) {
 			await info("--dry-run", "Skipping project naming");
 			return;

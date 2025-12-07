@@ -29,7 +29,10 @@ export async function getEmail(
 	}
 
 	if (!_ua) {
-		await info("Skipped", "You can add an email to .env (AOC_USER_AGENT) later.");
+		await info(
+			"Skipped",
+			"You can add an email to .env (AOC_USER_AGENT) later.",
+		);
 		return;
 	}
 
@@ -46,7 +49,8 @@ export async function getEmail(
 		ctx.exit(1);
 	}
 
-	ctx.aocUserAgent = (email as string)?.trim() || "example@example.com";
+	ctx.aocUserAgent =
+		typeof email === "string" ? email.trim() : "example@example.com";
 	if (ctx.dryRun) {
 		await info("--dry-run", "Skipping user agent");
 		return;
