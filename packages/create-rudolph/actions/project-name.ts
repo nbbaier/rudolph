@@ -1,14 +1,12 @@
 import path from "node:path";
-import { color } from "@astrojs/cli-kit";
+import { isCancel, text } from "@clack/prompts";
 import type { Context } from "../context";
 import { info, log, title } from "../messages";
 import { isEmpty, toValidName } from "../shared";
+import { color } from "../utils";
 
 export async function projectName(
-	ctx: Pick<
-		Context,
-		"yes" | "dryRun" | "prompt" | "projectName" | "exit" | "tasks" | "cwd"
-	>,
+	ctx: Pick<Context, "yes" | "dryRun" | "projectName" | "exit" | "tasks" | "cwd">,
 ) {
 	await checkCwd(ctx.cwd);
 
@@ -27,12 +25,9 @@ export async function projectName(
 			return;
 		}
 
-		const { name } = await ctx.prompt({
-			name: "name",
-			type: "text",
-			label: title("dir"),
-			message: "Where should we create your new project?",
-			initial: "advent-of-code",
+		const name = await text({
+			message: `${title("dir")}Where should we create your new project?`,
+			initialValue: "advent-of-code",
 			validate(value: string) {
 				if (!isEmpty(value)) {
 					return `Directory is not empty!`;
@@ -40,12 +35,15 @@ export async function projectName(
 				// Check for non-printable characters
 				if (value.match(/[^\x20-\x7E]/g) !== null)
 					return `Invalid non-printable character present!`;
-				return true;
 			},
 		});
 
-		ctx.cwd = name?.trim() ?? "";
-		ctx.projectName = toValidName(name?.trim() ?? "");
+		if (isCancel(name)) {
+			ctx.exit(1);
+		}
+
+		ctx.cwd = (name as string)?.trim() ?? "";
+		ctx.projectName = toValidName((name as string)?.trim() ?? "");
 		if (ctx.dryRun) {
 			await info("--dry-run", "Skipping project naming");
 			return;

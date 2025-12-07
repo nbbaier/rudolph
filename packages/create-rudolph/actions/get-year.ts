@@ -1,30 +1,27 @@
+import { isCancel, text } from "@clack/prompts";
 import type { Context } from "../context";
 import { info, title } from "../messages";
 
 export async function getYear(
-	ctx: Pick<
-		Context,
-		"aocYear" | "prompt" | "exit" | "aocYear" | "yes" | "dryRun"
-	>,
+	ctx: Pick<Context, "aocYear" | "exit" | "yes" | "dryRun">,
 ) {
 	if (ctx.yes) {
 		ctx.aocYear = new Date().getFullYear().toString();
 		await info("year", ctx.aocYear);
 		return;
 	}
-	const { year } = await ctx.prompt({
-		name: "year",
-		type: "text",
-		label: title("year"),
-		message: "What year is this for?",
-		initial: new Date().getFullYear().toString(),
+	const year = await text({
+		message: `${title("year")}What year is this for?`,
+		initialValue: new Date().getFullYear().toString(),
 		placeholder: new Date().getFullYear().toString(),
-		finalize: (value: string) => {
-			return value?.trim() ?? new Date().getFullYear().toString();
-		},
 	});
 
-	ctx.aocYear = year?.trim() ?? "";
+	if (isCancel(year)) {
+		ctx.exit(1);
+	}
+
+	ctx.aocYear =
+		(year as string)?.trim() || new Date().getFullYear().toString();
 	if (ctx.dryRun) {
 		await info("--dry-run", "Skipping year selection");
 		return;

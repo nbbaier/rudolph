@@ -1,27 +1,29 @@
 import fs from "node:fs";
 import path from "node:path";
-import { color } from "@astrojs/cli-kit";
+import { confirm, isCancel } from "@clack/prompts";
 import type { Context } from "../context";
 import { error, info, title } from "../messages";
 import { shell } from "../shell";
+import { color } from "../utils";
 
 export async function dependencies(
 	ctx: Pick<
 		Context,
-		"install" | "yes" | "prompt" | "packageManager" | "cwd" | "dryRun" | "tasks"
+		"install" | "yes" | "packageManager" | "cwd" | "dryRun" | "tasks"
 	>,
 ) {
-	let deps = ctx.install ?? ctx.yes;
-	if (deps === undefined) {
-		({ deps } = await ctx.prompt({
-			name: "deps",
-			type: "confirm",
-			label: title("deps"),
-			message: `Install dependencies?`,
-			hint: "recommended",
-			initial: true,
-		}));
-		ctx.install = deps;
+	let deps: boolean | symbol = ctx.install ?? ctx.yes ?? false;
+	if (deps === undefined || deps === false) {
+		deps = await confirm({
+			message: `${title("deps")}Install dependencies?`,
+			initialValue: true,
+		});
+
+		if (isCancel(deps)) {
+			deps = false;
+		}
+
+		ctx.install = deps as boolean;
 	}
 
 	if (ctx.dryRun) {

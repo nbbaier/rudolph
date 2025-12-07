@@ -1,33 +1,29 @@
+import { isCancel, password } from "@clack/prompts";
 import type { Context } from "../context";
 import { error, info, title } from "../messages";
 
 export async function getSession(
-	ctx: Pick<
-		Context,
-		"aocSession" | "prompt" | "exit" | "aocSession" | "yes" | "dryRun"
-	>,
+	ctx: Pick<Context, "aocSession" | "exit" | "yes" | "dryRun">,
 ) {
 	if (ctx.yes) {
 		ctx.aocSession = "FILL ME IN!";
 		await error("session", ctx.aocSession);
 		return;
 	}
-	const { session } = await ctx.prompt({
-		name: "session",
-		type: "text",
-		label: title("token"),
-		message: "What is your advent of code session token?",
-		initial: "",
-		mask: true,
+	const session = await password({
+		message: `${title("token")}What is your advent of code session token?`,
 		validate(value: string) {
 			if (!value) {
 				return "Session token is required";
 			}
-			return true;
 		},
 	});
 
-	ctx.aocSession = session?.trim() ?? "";
+	if (isCancel(session)) {
+		ctx.exit(1);
+	}
+
+	ctx.aocSession = (session as string)?.trim() ?? "";
 	if (ctx.dryRun) {
 		await info("--dry-run", "Skipping year selection");
 		return;

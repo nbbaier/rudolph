@@ -1,12 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
-import { color } from "@astrojs/cli-kit";
+import { confirm, isCancel } from "@clack/prompts";
 import type { Context } from "../context";
 import { error, info, title } from "../messages";
 import { shell } from "../shell";
+import { color } from "../utils";
 
 export async function git(
-	ctx: Pick<Context, "cwd" | "git" | "yes" | "prompt" | "dryRun" | "tasks">,
+	ctx: Pick<Context, "cwd" | "git" | "yes" | "dryRun" | "tasks">,
 ) {
 	if (fs.existsSync(path.join(ctx.cwd, ".git"))) {
 		await info("Nice!", `Git has already been initialized`);
@@ -18,17 +19,17 @@ export async function git(
 		await info("git", "true");
 	}
 
-	let _git = ctx.git ?? ctx.yes;
+	let _git: boolean | symbol = ctx.git ?? ctx.yes ?? false;
 
-	if (_git === undefined) {
-		({ git: _git } = await ctx.prompt({
-			name: "git",
-			type: "confirm",
-			label: title("git"),
-			message: `Initialize a new git repository?`,
-			hint: "optional",
-			initial: true,
-		}));
+	if (_git === undefined || _git === false) {
+		_git = await confirm({
+			message: `${title("git")}Initialize a new git repository?`,
+			initialValue: true,
+		});
+
+		if (isCancel(_git)) {
+			_git = false;
+		}
 	}
 
 	if (ctx.dryRun) {

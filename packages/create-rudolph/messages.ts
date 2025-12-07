@@ -1,8 +1,7 @@
 import { exec } from "node:child_process";
 import { stripVTControlCharacters } from "node:util";
-import { color, label } from "@astrojs/cli-kit";
-import { align, sleep } from "@astrojs/cli-kit/utils";
 import { shell } from "./shell";
+import { align, color, label, sleep } from "./utils";
 
 const stdout = process.stdout;
 
@@ -82,7 +81,7 @@ export const nextSteps = async ({
 			: `./${projectDir}`;
 		const enter = [
 			`\n${prefix}Enter your project directory using`,
-			color.cyan(`cd ${projectDir}`, ""),
+			color.cyan(`cd ${projectDir}`),
 		];
 		const len =
 			(enter[0]?.length ?? 0) + stripVTControlCharacters(enter[1] ?? "").length;

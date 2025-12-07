@@ -1,10 +1,8 @@
 import os from "node:os";
-import type { Task } from "@astrojs/cli-kit";
-import { prompt } from "@astrojs/cli-kit";
-import { random } from "@astrojs/cli-kit/utils";
 import arg from "arg";
 import getSeasonalData from "./data/seasonal";
 import { getName } from "./messages";
+import { random } from "./utils";
 
 export const getVersion = async (
 	_packageManager: string,
@@ -15,9 +13,16 @@ export const getVersion = async (
 	return "1";
 };
 
+export interface Task {
+	pending?: string;
+	start?: string;
+	end?: string;
+	while?: () => Promise<unknown>;
+	onError?: (error: unknown) => void;
+}
+
 export interface Context {
 	help: boolean;
-	prompt: typeof prompt;
 	cwd: string;
 	packageManager: string;
 	username: Promise<string>;
@@ -128,7 +133,6 @@ export async function getContext(argv: string[]): Promise<Context> {
 
 	const context: Context = {
 		help,
-		prompt,
 		packageManager,
 		username: getName(),
 		version: getVersion(

@@ -1,4 +1,5 @@
 import path from "node:path";
+import { isCancel, text } from "@clack/prompts";
 import type { Context } from "../context";
 import { info, title } from "../messages";
 import { isEmpty, toValidName } from "../shared";
@@ -8,7 +9,6 @@ export async function solutions(
 		Context,
 		| "tasks"
 		| "yes"
-		| "prompt"
 		| "exit"
 		| "solutionsPath"
 		| "solutionsDir"
@@ -26,28 +26,28 @@ export async function solutions(
 		return;
 	}
 
-	const { name } = await ctx.prompt({
-		name: "name",
-		type: "text",
-		label: title("dir"),
-		message: "What should we name the solutions directory?",
-		initial: `./${ctx.projectName}/solutions`,
+	const name = await text({
+		message: `${title("dir")}What should we name the solutions directory?`,
+		initialValue: `./${ctx.projectName}/solutions`,
 		validate(value: string) {
 			if (!isEmpty(value)) {
 				return `Directory is not empty!`;
 			}
 			if (value.match(/[^\x20-\x7E]/g) !== null)
 				return `Invalid non-printable character present!`;
-			return true;
 		},
 	});
+
+	if (isCancel(name)) {
+		ctx.exit(1);
+	}
 
 	const { projectName } = ctx;
 	if (!projectName) {
 		ctx.exit(1);
 	}
 
-	ctx.solutionsDir = name?.trim() ?? "";
+	ctx.solutionsDir = (name as string)?.trim() ?? "";
 	ctx.solutionsPath = path.resolve(projectName, ctx.solutionsDir);
 	if (ctx.dryRun) {
 		await info("--dry-run", "Skipping solutions directory creation");

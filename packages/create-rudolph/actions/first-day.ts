@@ -1,28 +1,25 @@
+import { confirm, isCancel } from "@clack/prompts";
 import type { Context } from "../context";
-import { error, info, title } from "../messages";
+import { info, title } from "../messages";
 
 export async function firstDay(
-	ctx: Pick<
-		Context,
-		"cwd" | "firstDay" | "yes" | "prompt" | "dryRun" | "tasks"
-	>,
+	ctx: Pick<Context, "cwd" | "firstDay" | "yes" | "dryRun" | "tasks">,
 ) {
 	if (ctx.yes) {
 		ctx.firstDay = true;
 		await info("first day", "true");
 		return;
 	}
-	let _firstDay = ctx.firstDay ?? ctx.yes;
-	if (_firstDay === undefined) {
-		({ firstDay: _firstDay } = await ctx.prompt({
-			name: "firstDay",
-			type: "confirm",
-			label: title("day"),
-			message: `Do you want to setup the first day?`,
-			hint: "optional",
-			initial: true,
-		}));
-		console.log("firstDay", _firstDay);
+	let _firstDay: boolean | symbol = ctx.firstDay ?? ctx.yes ?? false;
+	if (_firstDay === undefined || _firstDay === false) {
+		_firstDay = await confirm({
+			message: `${title("day")}Do you want to setup the first day?`,
+			initialValue: true,
+		});
+
+		if (isCancel(_firstDay)) {
+			_firstDay = false;
+		}
 	}
 
 	if (!_firstDay) {

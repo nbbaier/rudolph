@@ -14,7 +14,8 @@
 		"data",
 		"messages.ts",
 		"shared.ts",
-		"shell.ts"
+		"shell.ts",
+		"utils.ts"
 	],
 	"scripts": {
 		"dev": "bun index.ts",
@@ -30,7 +31,8 @@
 	],
 	"license": "MIT",
 	"dependencies": {
-		"@astrojs/cli-kit": "^0.4.1",
+		"@clack/prompts": "^0.9.0",
+		"picocolors": "^1.1.1",
 		"arg": "^5.0.2"
 	},
 	"devDependencies": {
