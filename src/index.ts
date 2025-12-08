@@ -42,13 +42,33 @@ program
 	.option("-y, --yes", "Skip prompts and use defaults")
 	.option("--dry-run", "Show what would be done without making changes")
 	.option("--pm <manager>", "Package manager to use (npm, bun, yarn, pnpm)")
-	.action(async (options: { yes?: boolean; dryRun?: boolean; pm?: string }) => {
-		await initCommand({
-			yes: options.yes,
-			dryRun: options.dryRun,
-			packageManager: options.pm,
-		});
-	});
+	.option(
+		"--solutions-dir <dir>",
+		"Folder for daily solutions (default: solutions)",
+	)
+	.option("--git", "Initialize git repository")
+	.option("--no-git", "Do not initialize git repository")
+	.option("--install", "Install dependencies")
+	.option("--no-install", "Do not install dependencies")
+	.action(
+		async (options: {
+			yes?: boolean;
+			dryRun?: boolean;
+			pm?: string;
+			solutionsDir?: string;
+			git?: boolean;
+			install?: boolean;
+		}) => {
+			await initCommand({
+				yes: options.yes,
+				dryRun: options.dryRun,
+				packageManager: options.pm,
+				solutionsDir: options.solutionsDir,
+				git: options.git,
+				install: options.install,
+			});
+		},
+	);
 
 withDayYearArguments(
 	program

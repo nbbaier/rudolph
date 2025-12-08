@@ -11,9 +11,11 @@ export interface InitContext {
 	packageManager: string;
 	dryRun?: boolean;
 	yes?: boolean;
+	quickMode?: boolean;
 	projectName?: string;
 	install?: boolean;
 	git?: boolean;
+	solutionsDirArg?: string;
 	solutionsDir?: string;
 	solutionsPath?: string;
 	aocSession?: string;
@@ -35,6 +37,7 @@ export function createContext(options: {
 	dryRun?: boolean;
 	install?: boolean;
 	git?: boolean;
+	solutionsDir?: string;
 	packageManager?: string;
 }): InitContext {
 	return {
@@ -44,6 +47,7 @@ export function createContext(options: {
 		yes: options.yes,
 		install: options.install,
 		git: options.git,
+		solutionsDirArg: options.solutionsDir,
 		tasks: [],
 		exit(code: number): never {
 			process.exit(code);

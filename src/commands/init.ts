@@ -30,6 +30,9 @@ export interface InitOptions {
 	yes?: boolean;
 	dryRun?: boolean;
 	packageManager?: string;
+	solutionsDir?: string;
+	git?: boolean;
+	install?: boolean;
 }
 
 async function isOnline(): Promise<boolean> {
@@ -56,8 +59,55 @@ async function showIntro(): Promise<void> {
 	banner(name);
 }
 
+async function showEnvironmentDetection(ctx: InitContext): Promise<void> {
+	const cwdEmpty = isEmpty(ctx.cwd);
+	const hasExistingPackage = hasPackageJson(ctx.cwd);
+
+	log("");
+	await info("Environment", "");
+
+	if (hasExistingPackage) {
+		await info("  Project", "Existing package.json detected");
+	} else if (cwdEmpty) {
+		await info("  Project", "Starting fresh in empty directory");
+	} else {
+		await info("  Project", "Non-empty directory (will prompt before overwriting)");
+	}
+
+	await info("  Package Manager", ctx.packageManager);
+	await info("  Location", ctx.cwd);
+	log("");
+}
+
+async function handleQuickVsFull(ctx: InitContext): Promise<void> {
+	if (ctx.yes || ctx.dryRun) {
+		ctx.quickMode = true;
+		if (!ctx.dryRun) {
+			await info("mode", "Quick setup (using defaults)");
+		}
+		return;
+	}
+
+	const choice = await handleSelectPrompt(
+		{
+			message: "Setup mode:",
+			options: [
+				{
+					value: "quick",
+					label: "Quick (~1 min) - sensible defaults, minimal questions",
+				},
+				{ value: "full", label: "Full - customize every aspect" },
+			],
+			initialValue: "quick",
+		},
+		() => ctx.exit(1),
+	);
+
+	ctx.quickMode = choice === "quick";
+}
+
 async function handlePackageManager(ctx: InitContext): Promise<void> {
-	if (ctx.yes) {
+	if (ctx.yes || ctx.quickMode) {
 		await info("pm", ctx.packageManager);
 		return;
 	}
@@ -136,8 +186,19 @@ async function handleProjectName(ctx: InitContext): Promise<void> {
 }
 
 async function handleSolutionsDir(ctx: InitContext): Promise<void> {
-	if (ctx.yes) {
-		ctx.solutionsDir = "solutions";
+	const defaultDir = "solutions";
+
+	// Use CLI flag if provided
+	if (ctx.solutionsDirArg) {
+		ctx.solutionsDir = ctx.solutionsDirArg;
+		ctx.solutionsPath = path.resolve(ctx.cwd, ctx.solutionsDir);
+		await info("dir", `Solutions will live in ./${ctx.solutionsDir}`);
+		return;
+	}
+
+	// Skip prompt in quick mode or yes mode
+	if (ctx.yes || ctx.quickMode) {
+		ctx.solutionsDir = defaultDir;
 		ctx.solutionsPath = path.resolve(ctx.cwd, ctx.solutionsDir);
 		await info("dir", `Solutions will live in ./${ctx.solutionsDir}`);
 		return;
@@ -146,11 +207,11 @@ async function handleSolutionsDir(ctx: InitContext): Promise<void> {
 	ctx.solutionsDir = await handleTextPrompt(
 		{
 			message: "Folder for your daily solutions:",
-			placeholder: "solutions",
+			placeholder: defaultDir,
 			validator: (value) =>
 				validators.directoryName(value, ctx.cwd),
 		},
-		"solutions",
+		defaultDir,
 		() => ctx.exit(1),
 	);
 	ctx.solutionsPath = path.resolve(ctx.cwd, ctx.solutionsDir);
@@ -159,7 +220,7 @@ async function handleSolutionsDir(ctx: InitContext): Promise<void> {
 async function handleYear(ctx: InitContext): Promise<void> {
 	const currentYear = new Date().getFullYear().toString();
 
-	if (ctx.yes) {
+	if (ctx.yes || ctx.quickMode) {
 		ctx.aocYear = currentYear;
 		await info("year", ctx.aocYear);
 		return;
@@ -175,97 +236,115 @@ async function handleYear(ctx: InitContext): Promise<void> {
 	);
 }
 
-async function handleSession(ctx: InitContext): Promise<void> {
-	if (ctx.yes) {
+async function handleAoCAuth(ctx: InitContext): Promise<void> {
+	// Skip entirely in quick mode
+	if (ctx.quickMode) {
 		ctx.aocSession = "FILL_ME_IN";
-		await info(
-			"session",
-			"Set to FILL_ME_IN in .env; update it with your AoC session cookie before fetching inputs.",
-		);
-		return;
-	}
-
-	const wantsSession = await handleConfirmPrompt(
-		{
-			message:
-				"Download puzzle inputs automatically? (requires your AoC session cookie, stored locally in .env)",
-			initialValue: true,
-		},
-		() => ctx.exit(1),
-	);
-
-	if (!wantsSession) {
-		ctx.aocSession = "FILL_ME_IN";
-		await info("Skipped", "You can add your session cookie to .env later.");
-		return;
-	}
-
-	ctx.aocSession = await handlePasswordPrompt(
-		"Paste your 'session' cookie from adventofcode.com (found in browser dev tools):",
-		() => ctx.exit(1),
-	);
-	if (!ctx.aocSession) {
-		ctx.aocSession = "FILL_ME_IN";
-	}
-}
-
-async function handleEmail(ctx: InitContext): Promise<void> {
-	if (ctx.yes) {
 		ctx.aocUserAgent = "FILL_ME_IN";
-		await info(
-			"email",
-			"Set to FILL_ME_IN in .env; update it if you'd like to include a contact in the User-Agent.",
-		);
+		await info("Advent of Code", "Configure later in .env");
 		return;
 	}
 
-	const wantsEmail = await handleConfirmPrompt(
-		{
-			message:
-				"Include an email in the User-Agent? (AoC recommends a contact for API usage; optional but polite)",
-			initialValue: true,
-		},
-		() => ctx.exit(1),
-	);
-
-	if (!wantsEmail) {
-		await info(
-			"Skipped",
-			"You can add an email to .env (AOC_USER_AGENT) later.",
-		);
+	if (ctx.yes) {
+		ctx.aocSession = "FILL_ME_IN";
+		ctx.aocUserAgent = "FILL_ME_IN";
+		await info("Advent of Code", "Configure in .env before using");
 		return;
 	}
 
-	const gitEmail = await getGitEmail();
+	log("");
+	await info("Advent of Code Setup", "");
 
-	ctx.aocUserAgent = await handleTextPrompt(
-		{
-			message: "Email for User-Agent (any contact you're comfortable with):",
-			placeholder: "your.email@example.com",
-		},
-		gitEmail || "",
-		() => ctx.exit(1),
-	);
+	// Check if already configured in .env
+	const hasExistingSession = process.env.AOC_SESSION && process.env.AOC_SESSION !== "FILL_ME_IN";
+	const hasExistingEmail = process.env.AOC_USER_AGENT && process.env.AOC_USER_AGENT !== "FILL_ME_IN";
+
+	if (hasExistingSession) {
+		await info("  Session", "Already configured in .env");
+	} else {
+		const wantsSession = await handleConfirmPrompt(
+			{
+				message:
+					"Download puzzle inputs automatically? (requires your AoC session cookie, stored locally in .env)",
+				initialValue: true,
+			},
+			() => ctx.exit(1),
+		);
+
+		if (wantsSession) {
+			await info(
+				"  Session Cookie",
+				"Find this in your browser dev tools (Application > Cookies > adventofcode.com)",
+			);
+			ctx.aocSession = await handlePasswordPrompt(
+				"Paste your 'session' cookie:",
+				() => ctx.exit(1),
+			);
+			if (!ctx.aocSession) {
+				ctx.aocSession = "FILL_ME_IN";
+			}
+		} else {
+			ctx.aocSession = "FILL_ME_IN";
+			await info("  Session", "Skipped - add to .env later if needed");
+		}
+	}
+
+	if (!hasExistingEmail) {
+		const wantsEmail = await handleConfirmPrompt(
+			{
+				message:
+					"Include an email in User-Agent? (recommended by AoC; optional)",
+				initialValue: true,
+			},
+			() => ctx.exit(1),
+		);
+
+		if (wantsEmail) {
+			const gitEmail = await getGitEmail();
+			ctx.aocUserAgent = await handleTextPrompt(
+				{
+					message: "Email for User-Agent:",
+					placeholder: "your.email@example.com",
+				},
+				gitEmail || "",
+				() => ctx.exit(1),
+			);
+		} else {
+			ctx.aocUserAgent = "FILL_ME_IN";
+			await info("  Email", "Skipped - add to .env later if needed");
+		}
+	} else {
+		await info("  Email", "Already configured in .env");
+	}
+
+	log("");
 }
 
 async function handleDependencies(ctx: InitContext): Promise<void> {
-	let deps: boolean | symbol = ctx.install ?? ctx.yes ?? false;
+	// Determine if we should install
+	let shouldInstall: boolean | symbol = ctx.install ?? (ctx.yes || ctx.quickMode) ?? false;
 
-	if (deps === false) {
-		deps = await handleConfirmPrompt(
+	// If not explicitly set via CLI or --yes, prompt
+	if (shouldInstall === false && !ctx.yes && !ctx.quickMode) {
+		shouldInstall = await handleConfirmPrompt(
 			{
 				message: "Install dependencies?",
 				initialValue: true,
 			},
 			() => ctx.exit(1),
 		);
+	}
 
-		ctx.install = deps as boolean;
+	// Convert symbol to boolean if needed
+	if (shouldInstall === false) {
+		shouldInstall = false;
+	} else if (shouldInstall !== true) {
+		shouldInstall = true;
 	}
 
 	if (ctx.dryRun) {
 		await info("--dry-run", "Skipping dependency installation");
-	} else if (deps) {
+	} else if (shouldInstall) {
 		ctx.tasks.push({
 			pending: "Dependencies",
 			start: `Dependencies installing with ${ctx.packageManager}...`,
@@ -284,7 +363,7 @@ async function handleDependencies(ctx: InitContext): Promise<void> {
 	} else {
 		await info(
 			"Skipped",
-			`Run ${ctx.packageManager} install when you're ready`,
+			`Run ${color.bold(`${ctx.packageManager} install`)} when you're ready`,
 		);
 	}
 }
@@ -308,21 +387,30 @@ async function handleGit(ctx: InitContext): Promise<void> {
 		return;
 	}
 
-	let _git: boolean | symbol = ctx.git ?? ctx.yes ?? false;
+	// Determine if we should initialize git
+	let shouldInit: boolean | symbol = ctx.git ?? (ctx.yes || ctx.quickMode) ?? false;
 
-	if (_git === false) {
-		_git = await handleConfirmPrompt(
+	// If not explicitly set via CLI or --yes, prompt
+	if (shouldInit === false && !ctx.yes && !ctx.quickMode) {
+		shouldInit = await handleConfirmPrompt(
 			{
-				message: "Initialize a git repository and make an initial commit?",
+				message: "Initialize a git repository?",
 				initialValue: true,
 			},
 			() => ctx.exit(1),
 		);
 	}
 
+	// Convert symbol to boolean if needed
+	if (shouldInit === false) {
+		shouldInit = false;
+	} else if (shouldInit !== true) {
+		shouldInit = true;
+	}
+
 	if (ctx.dryRun) {
 		await info("--dry-run", "Skipping Git initialization");
-	} else if (_git) {
+	} else if (shouldInit) {
 		ctx.tasks.push({
 			pending: "Git",
 			start: "Git initializing...",
@@ -345,7 +433,7 @@ async function handleGit(ctx: InitContext): Promise<void> {
 	} else {
 		await info(
 			"Skipped",
-			`You can run ${color.reset("git init")} later if you'd like`,
+			`Run ${color.bold("git init")} later if you'd like`,
 		);
 	}
 }
@@ -361,6 +449,27 @@ async function showNextSteps(ctx: InitContext): Promise<void> {
 	};
 
 	const pmPrefix = commandMap[ctx.packageManager] || "npm run";
+
+	// Show additional setup hints based on what was configured
+	log("");
+	if (!ctx.aocSession || ctx.aocSession === "FILL_ME_IN") {
+		log(
+			"  " +
+				color.dim(
+					"Reminder: Add your AOC_SESSION to .env to auto-download inputs",
+				),
+		);
+	}
+
+	if (!ctx.aocUserAgent || ctx.aocUserAgent === "FILL_ME_IN") {
+		log(
+			"  " +
+				color.dim(
+					"Reminder: Add your email to AOC_USER_AGENT in .env (recommended by AoC)",
+				),
+		);
+	}
+
 	await nextSteps({ projectDir, pmPrefix });
 }
 
@@ -371,17 +480,33 @@ export async function initCommand(options: InitOptions = {}): Promise<void> {
 		yes: options.yes,
 		dryRun: options.dryRun,
 		packageManager: options.packageManager,
+		solutionsDir: options.solutionsDir,
+		install: options.install,
+		git: options.git,
 	});
 
 	await verifyNetwork(ctx);
 	await showIntro();
 
-	await handlePackageManager(ctx);
+	// Show environment detection unless running in dry-run (which is mostly for testing)
+	if (!ctx.dryRun) {
+		await showEnvironmentDetection(ctx);
+	}
+
+	await handleQuickVsFull(ctx);
+
+	// Core project setup
 	await handleProjectName(ctx);
 	await handleSolutionsDir(ctx);
+
+	// Configuration
 	await handleYear(ctx);
-	await handleSession(ctx);
-	await handleEmail(ctx);
+	await handleAoCAuth(ctx);
+
+	// Optional advanced setup (only in full mode)
+	if (!ctx.quickMode) {
+		await handlePackageManager(ctx);
+	}
 
 	ctx.tasks.push({
 		pending: "Scaffold Project",
