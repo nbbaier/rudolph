@@ -15,7 +15,8 @@
 		"noUnusedParameters": false,
 		"noPropertyAccessFromIndexSignature": false,
 		"esModuleInterop": true,
-		"resolveJsonModule": true
+		"resolveJsonModule": true,
+		"types": ["bun"]
 	},
 	"include": ["src/**/*"],
 	"exclude": ["node_modules", "dist"]

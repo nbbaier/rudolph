@@ -47,7 +47,9 @@ export async function showPrompt(
 				message: config.message,
 				placeholder: config.placeholder,
 				initialValue: config.placeholder || "",
-				validate: config.validator,
+				validate: config.validator
+					? (value: string | undefined) => config.validator!(value ?? "")
+					: undefined,
 			});
 			if (isCancel(response)) onCancel();
 			return (response as string).trim();
