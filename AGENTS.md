@@ -33,3 +33,17 @@ Solution format: `export default { p1: (input: string) => number|string, p2: ...
 -  **Validation**: Use Zod schemas (e.g., `daySchema`, `yearSchema` in `cli-helpers.ts`)
 -  **Naming**: camelCase functions/vars, PascalCase classes/types, SCREAMING_SNAKE_CASE for constants
 -  **Async**: Fully async/await; commands are async actions
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues (nbbaier/rudolph), using the `gh` CLI. External PRs are not treated as a triage surface. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default label vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`) used as-is. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context layout — one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
