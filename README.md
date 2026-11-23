@@ -11,12 +11,12 @@ A powerful CLI tool for Advent of Code enthusiasts. Set up, run, submit, and tra
 
 ## Features
 
-✅ **One-click setup** - Scaffold new AoC projects instantly with `rudolph init`
-✅ **Automatic input fetching** - Download puzzle inputs automatically
-✅ **Solution running** - Test against sample and real inputs
-✅ **Answer submission** - Submit answers directly from CLI
-✅ **Guess tracking** - Keep track of your submission history
-✅ **Multi-year support** - Work with multiple AoC years simultaneously
+- ✅ **One-click setup** - Scaffold new AoC projects instantly with `rudolph init`
+- ✅ **Automatic input fetching** - Download puzzle inputs automatically
+- ✅ **Solution running** - Test against sample and real inputs
+- ✅ **Answer submission** - Submit answers directly from CLI
+- ✅ **Guess tracking** - Keep track of your submission history
+- ✅ **Multi-year support** - Work with multiple AoC years simultaneously
 
 ## Prerequisites
 
