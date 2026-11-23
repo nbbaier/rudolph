@@ -168,19 +168,13 @@ withDayYearArguments(
 
 program
 	.command("stars")
-	.description("Show stars for a year using recorded guesses")
+	.description("Show stars earned for a year from Advent of Code")
 	.argument("[year]", "Year (e.g., 2024)", getDefaultYear())
-	.option("-o, --output-dir <dir>", "Output directory for generated files")
 	.option("--json", "Output JSON")
-	.action(
-		async (
-			yearArg: string,
-			options: { outputDir?: string; json?: boolean },
-		) => {
-			const year = yearSchema.parse(yearArg);
-			await statusCommand(year, options.outputDir, options.json);
-		},
-	);
+	.action(async (yearArg: string, options: { json?: boolean }) => {
+		const year = yearSchema.parse(yearArg);
+		await statusCommand(year, options.json);
+	});
 
 withDayYearArguments(
 	program

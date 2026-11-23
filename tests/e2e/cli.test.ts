@@ -107,4 +107,16 @@ describe("CLI e2e tests", () => {
 			expect(stdout).toContain("input");
 		});
 	});
+
+	describe("rudolph stars --help", () => {
+		test("shows stars help", async () => {
+			const { stdout, code } = await runCli(["stars", "--help"], tempDir);
+
+			expect(code).toBe(0);
+			expect(stdout).toContain(
+				"Show stars earned for a year from Advent of Code",
+			);
+			expect(stdout).toContain("--json");
+		});
+	});
 });
