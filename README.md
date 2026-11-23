@@ -5,7 +5,7 @@
 </div>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![npm version](https://badge.fury.io/js/@nbbaier/rudolph.svg)](https://badge.fury.io/js/@nbbaier/rudolph)
+[![npm version](https://img.shields.io/npm/v/@nbbaier/rudolph.svg)](https://www.npmjs.com/package/@nbbaier/rudolph)
 
 A powerful CLI tool for Advent of Code enthusiasts. Set up, run, submit, and track your AoC solutions with ease.
 
