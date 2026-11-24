@@ -51,9 +51,12 @@ describe("init integration tests", () => {
 			const pkg = JSON.parse(
 				fs.readFileSync(path.join(tempDir, "package.json"), "utf-8"),
 			);
-			expect(pkg.dependencies["@nbbaier/rudolph"]).toBeDefined();
-			expect(pkg.devDependencies.typescript).toBeDefined();
-			expect(pkg.devDependencies["@types/node"]).toBeDefined();
+			expect(pkg.dependencies).toBeUndefined();
+			expect(pkg.devDependencies["@nbbaier/rudolph"]).toMatch(
+				/^\^\d+\.\d+\.\d+/,
+			);
+			expect(pkg.devDependencies.typescript).toMatch(/^\^\d+\.\d+\.\d+/);
+			expect(pkg.devDependencies["@types/node"]).toMatch(/^\^\d+\.\d+\.\d+/);
 			expect(pkg.devDependencies["@types/bun"]).toBeUndefined();
 			expect(pkg.packageManager).toContain("npm@");
 		});

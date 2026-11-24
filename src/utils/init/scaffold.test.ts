@@ -66,10 +66,40 @@ describe("scaffoldProject", () => {
 		expect(pkg.scripts.setup).toBe("rudolph setup");
 		expect(pkg.scripts["run:input"]).toBe("rudolph run input");
 		expect(pkg.scripts["run:sample"]).toBe("rudolph run sample");
-		expect(pkg.devDependencies.typescript).toBeDefined();
-		expect(pkg.devDependencies["@types/node"]).toBeDefined();
+		expect(pkg.dependencies).toBeUndefined();
+		expect(pkg.devDependencies["@nbbaier/rudolph"]).toMatch(/^\^\d+\.\d+\.\d+/);
+		expect(pkg.devDependencies.typescript).toMatch(/^\^\d+\.\d+\.\d+/);
+		expect(pkg.devDependencies["@types/node"]).toMatch(/^\^\d+\.\d+\.\d+/);
 		expect(pkg.devDependencies["@types/bun"]).toBeUndefined();
 		expect(pkg.packageManager).toContain("npm@");
+	});
+
+	test("falls back to known versions when registry lookup fails", async () => {
+		const originalFetch = globalThis.fetch;
+		globalThis.fetch = (() =>
+			Promise.reject(new Error("offline"))) as unknown as typeof fetch;
+		try {
+			await scaffoldProject({
+				projectName: "offline-test",
+				cwd: tempDir,
+				packageManager: "bun",
+				aocSession: "",
+				aocYear: "2024",
+				aocUserAgent: "",
+				solutionsDir: "solutions",
+			});
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
+
+		const pkg = JSON.parse(
+			fs.readFileSync(path.join(tempDir, "package.json"), "utf-8"),
+		);
+		expect(pkg.dependencies).toBeUndefined();
+		expect(pkg.devDependencies["@nbbaier/rudolph"]).toMatch(/^\^\d+\.\d+\.\d+/);
+		expect(pkg.devDependencies.typescript).toMatch(/^\^\d+\.\d+\.\d+/);
+		expect(pkg.devDependencies["@types/node"]).toMatch(/^\^\d+\.\d+\.\d+/);
+		expect(pkg.devDependencies["@types/bun"]).toMatch(/^\^\d+\.\d+\.\d+/);
 	});
 
 	test("generates .env with correct values", async () => {

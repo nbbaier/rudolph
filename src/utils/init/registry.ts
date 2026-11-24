@@ -1,18 +1,21 @@
 import { exec } from "./exec";
 
-let _registry: string;
+let _registryPromise: Promise<string> | undefined;
 
 async function getRegistry(packageManager: string): Promise<string> {
-	if (_registry) return _registry;
+	if (_registryPromise) return _registryPromise;
 	const fallback = "https://registry.npmjs.org";
-	try {
-		const stdout = await exec(packageManager, ["config", "get", "registry"]);
-		_registry = stdout?.trim()?.replace(/\/$/, "") || fallback;
-		if (!new URL(_registry).host) _registry = fallback;
-	} catch {
-		_registry = fallback;
-	}
-	return _registry;
+	_registryPromise = (async () => {
+		try {
+			const stdout = await exec(packageManager, ["config", "get", "registry"]);
+			const registry = stdout?.trim()?.replace(/\/$/, "") || fallback;
+			if (!new URL(registry).host) return fallback;
+			return registry;
+		} catch {
+			return fallback;
+		}
+	})();
+	return _registryPromise;
 }
 
 export const getVersion = async (

@@ -1,8 +1,19 @@
 import fs from "node:fs";
 import path from "node:path";
+import rudolphPkg from "../../../package.json";
 import type { InitContext } from "./context";
 import { getVersion } from "./registry";
 import { toValidName } from "./validation";
+
+const DEV_DEP_FALLBACKS = {
+	"@nbbaier/rudolph": rudolphPkg.version,
+	typescript: rudolphPkg.devDependencies.typescript.replace(/^[\^~]/, ""),
+	"@types/node": rudolphPkg.devDependencies["@types/node"].replace(
+		/^[\^~]/,
+		"",
+	),
+	"@types/bun": rudolphPkg.devDependencies["@types/bun"].replace(/^[\^~]/, ""),
+} as const;
 
 export async function scaffold(
 	ctx: Pick<
@@ -66,15 +77,36 @@ function packageManagerSpec(pm: string): string {
 	return `${pm}@${version}`;
 }
 
-function generatePackageJson(name: string, version: string, pm: string) {
-	const devDeps: Record<string, string> = {
-		typescript: "^5.9.3",
-		"@types/node": "^22.9.0",
-	};
-	if (pm === "bun") {
-		devDeps["@types/bun"] = "^1.3.3";
-	}
+async function resolveDevDependencies(
+	packageManager: string,
+): Promise<Record<string, string>> {
+	const packages: Array<keyof typeof DEV_DEP_FALLBACKS> = [
+		"@nbbaier/rudolph",
+		"typescript",
+		"@types/node",
+		...(packageManager === "bun" ? (["@types/bun"] as const) : []),
+	];
 
+	const resolved = await Promise.all(
+		packages.map(async (pkgName) => {
+			const version = await getVersion(
+				packageManager,
+				pkgName,
+				"latest",
+				DEV_DEP_FALLBACKS[pkgName],
+			);
+			return [pkgName, `^${version}`] as const;
+		}),
+	);
+
+	return Object.fromEntries(resolved);
+}
+
+function generatePackageJson(
+	name: string,
+	devDependencies: Record<string, string>,
+	pm: string,
+) {
 	const pkg = {
 		name: toValidName(name),
 		private: true,
@@ -85,10 +117,7 @@ function generatePackageJson(name: string, version: string, pm: string) {
 			"run:input": "rudolph run input",
 			"run:sample": "rudolph run sample",
 		},
-		dependencies: {
-			"@nbbaier/rudolph": `^${version}`,
-		},
-		devDependencies: devDeps,
+		devDependencies,
 		packageManager: packageManagerSpec(pm),
 	};
 	return `${JSON.stringify(pkg, null, 2)}\n`;
@@ -138,13 +167,10 @@ type ScaffoldContext = {
 export async function scaffoldProject(ctx: ScaffoldContext) {
 	const projectDir = ctx.cwd;
 
-	const rudolphVersion = await getVersion(
-		ctx.packageManager,
-		"@nbbaier/rudolph",
-	);
+	const devDependencies = await resolveDevDependencies(ctx.packageManager);
 	const packageJson = generatePackageJson(
 		ctx.projectName,
-		rudolphVersion,
+		devDependencies,
 		ctx.packageManager,
 	);
 
